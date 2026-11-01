@@ -4,6 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import Projects from './Projects';
 import Socials from './Socials';
 import Diary from './Diary';
+import { useHomeAnimation } from './HomeAnimation';
 import { ShaderEffect } from './lib/custom-effect-runtime/index';
 import { setup, render, manifest } from './lib/custom-effects/CodeComponentId_91040247ba61849c1772a9a1caf10833c2700c71_8351';
 import './styles.css';
@@ -32,7 +33,7 @@ const links = [
   { hindi: 'सपने', english: 'Dreams', href: '/dreams' },
 ];
 
-function Navigation({ currentPage }) {
+function Navigation({ currentPage, dreamsLinkProps }) {
   return (
     <nav className="navigation" aria-label="Portfolio">
       {links.map(({ hindi, english, href, source, node }) => (
@@ -42,6 +43,7 @@ function Navigation({ currentPage }) {
           aria-current={currentPage === english ? 'page' : undefined}
           data-node-id={node}
           data-figma-href={source || href}
+          {...(english === 'Dreams' ? dreamsLinkProps : {})}
         >
           <span lang="hi">{hindi}</span>
           <span className="navigation-english">{english}</span>
@@ -52,9 +54,11 @@ function Navigation({ currentPage }) {
 }
 
 function Home() {
+  const { dreamsLinkProps, animation } = useHomeAnimation();
   return (
     <main className="home" data-figma-page="placeholder.home.com">
-      <Navigation />
+      <Navigation dreamsLinkProps={dreamsLinkProps} />
+      {animation}
       <div className="wordmark" data-node-id="1:61">
         <ShaderEffect className="wordmark-effect" shaders={shaders}>
           <h1 className="wordmark-text"><span className="mess">MESS</span><span className="tripping">Tripping</span></h1>
