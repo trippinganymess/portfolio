@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" fill="none">
+  <defs>
+    <linearGradient id="background" x1="110" y1="50" x2="1400" y2="760" gradientUnits="userSpaceOnUse"><stop stop-color="#182c45"/><stop offset=".5" stop-color="#2c526b"/><stop offset="1" stop-color="#152b47"/></linearGradient>
+    <radialGradient id="halo"><stop stop-color="#76b2c8" stop-opacity=".2"/><stop offset="1" stop-color="#76b2c8" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><circle cx="18" cy="18" r=".9" fill="#9acde0" opacity=".15"/></pattern>
+    <linearGradient id="stream"><stop stop-color="#7daed0" stop-opacity="0"/><stop offset=".5" stop-color="#c3d9e7" stop-opacity=".7"/><stop offset="1" stop-color="#7daed0" stop-opacity="0"/></linearGradient>
+  </defs>
+  <path fill="url(#background)" d="M0 0h1440v760H0z"/>
+  <path fill="url(#grid)" d="M0 0h1440v760H0z"/>
+  <ellipse cx="720" cy="350" rx="550" ry="340" fill="url(#halo)"/>
+  <g stroke="url(#stream)"><path d="M0 217h350l158 96h436l152-96h344M0 288h350l158 40h436l152-40h344M0 357h1440M0 426h350l158-54h436l152 54h344M0 497h350l158-110h436l152 110h344"/></g>
+  <g stroke="#a1ccdd" stroke-opacity=".32" fill="#204057" fill-opacity=".9"><rect x="347" y="232" width="178" height="232" rx="88"/><rect x="633" y="232" width="178" height="232" rx="88"/><rect x="919" y="232" width="178" height="232" rx="88"/></g>
+  <g stroke="#a7d5e0" stroke-opacity=".45"><path d="m382 293 54 42 54-42m-108 53 54-11 54 11m-108 53 54-64 54 64M668 290l27 109 27-109 27 109 27-109m-108 54 108 1M952 310l47-28 45 50-31 54-54-16-7-60Zm47-28 14 104m-61-76 92 22m-85 38 85-38"/></g>
+  <g fill="#d1e2e9"><circle cx="436" cy="335" r="7"/><circle cx="668" cy="290" r="4"/><circle cx="695" cy="399" r="4"/><circle cx="722" cy="290" r="4"/><circle cx="749" cy="399" r="4"/><circle cx="776" cy="290" r="4"/><circle cx="952" cy="310" r="5"/><circle cx="999" cy="282" r="5"/><circle cx="1044" cy="332" r="5"/><circle cx="1013" cy="386" r="5"/><circle cx="959" cy="370" r="5"/></g>
+  <g font-family="monospace" font-size="13" text-anchor="middle" fill="#b4d2e0" letter-spacing="2"><text x="436" y="432">AE</text><text x="722" y="432">TCN</text><text x="1008" y="432">SF-SOINN</text></g>
+  <text x="720" y="134" text-anchor="middle" fill="#bfd4e2" font-family="Arial, sans-serif" font-size="12" letter-spacing="6">PATTERNS BEYOND THE FAMILIAR</text>
+  <text x="720" y="568" text-anchor="middle" fill="#e1edf3" font-family="Arial, sans-serif" font-size="55" font-weight="300" letter-spacing="-2">Continual learning.</text>
+  <text x="720" y="614" text-anchor="middle" fill="#a8c4d6" font-family="monospace" font-size="13" letter-spacing="4">NETWORK INTRUSION DETECTION</text>
+  <path d="M52 52h38M52 52v38m1298-38h38v38M52 632v38h38m1260 0h38v-38" stroke="#bfd5e3" stroke-opacity=".3"/>
+</svg>

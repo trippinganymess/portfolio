@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" fill="none">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1440" y2="760" gradientUnits="userSpaceOnUse"><stop stop-color="#594149"/><stop offset=".5" stop-color="#97675e"/><stop offset="1" stop-color="#392f47"/></linearGradient>
+    <linearGradient id="step" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d6a386"/><stop offset="1" stop-color="#925e61"/></linearGradient>
+    <radialGradient id="halo"><stop stop-color="#ebbb91" stop-opacity=".28"/><stop offset="1" stop-color="#ebbb91" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0v48" stroke="#f4d1b2" stroke-opacity=".055"/></pattern>
+  </defs>
+  <path fill="url(#background)" d="M0 0h1440v760H0z"/>
+  <path fill="url(#grid)" d="M0 0h1440v760H0z"/>
+  <ellipse cx="720" cy="325" rx="460" ry="350" fill="url(#halo)"/>
+  <g stroke="#edc7a8" stroke-opacity=".3"><path d="m105 520 615-326 615 326M234 589l486-260 486 260M351 644l369-197 369 197"/><path d="M720 193v258" stroke-dasharray="3 9"/></g>
+  <g fill="url(#step)" stroke="#eec4a0" stroke-opacity=".4">
+    <path d="m379 369 114-60 112 60-114 62-114-62Z"/><path d="M379 369v78l114 62v-78Z" fill="#8e5b5c"/><path d="m493 431 112-62v78l-112 62Z" fill="#774d56"/>
+    <path d="m606 288 114-60 114 60-114 62-114-62Z"/><path d="M606 288v106l114 62V350Z" fill="#aa7668"/><path d="m720 350 114-62v106l-114 62Z" fill="#805460"/>
+    <path d="m835 207 114-60 112 60-114 62-112-62Z"/><path d="M835 207v136l112 62V269Z" fill="#c18e75"/><path d="m947 269 114-62v136l-114 62Z" fill="#91616b"/>
+  </g>
+  <path d="m493 355 227-81 229-81" stroke="#f2d6b9" stroke-width="2" stroke-dasharray="5 8"/>
+  <g fill="#f5dec0"><circle cx="493" cy="355" r="7"/><circle cx="720" cy="274" r="7"/><circle cx="949" cy="193" r="7"/></g>
+  <text x="720" y="115" text-anchor="middle" fill="#f0ccaf" font-family="Arial, sans-serif" font-size="12" letter-spacing="6">BUILD A LITTLE. LEARN TOGETHER.</text>
+  <text x="720" y="575" text-anchor="middle" fill="#f8e1c9" font-family="Arial, sans-serif" font-size="112" font-weight="300" letter-spacing="10">LCA</text>
+  <text x="720" y="618" text-anchor="middle" fill="#e2bfa9" font-family="monospace" font-size="13" letter-spacing="4">ROADMAPS / PRACTICE / PROGRESS</text>
+  <path d="M52 52h38M52 52v38m1298-38h38v38M52 632v38h38m1260 0h38v-38" stroke="#edc7a8" stroke-opacity=".3"/>
+</svg>

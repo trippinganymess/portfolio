@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;700&family=Noto+Sans+Devanagari:wght@300&display=swap');
+
+:root {
+  --home-background: rgb(34.943042770028114 45.521215349435806 193.61572265625);
+  --home-foreground: #fff;
+  --biography-background: #2929c7;
+  --biography-secondary: #d6d6f6;
+  font-family: Inter, sans-serif;
+  color: var(--home-foreground);
+  background: var(--home-background);
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+p, h1 { margin: 0; }
+
+html, body, #root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body { min-width: 240px; }
+
+.home {
+  --home-title-size: min(24vw, 160px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: max(610px, 100svh);
+  padding: 0 0 1px 1px;
+  overflow: hidden;
+}
+
+.navigation {
+  position: absolute;
+  top: 64px;
+  right: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+  width: 101px;
+  font-size: 17px;
+  font-weight: 100;
+  line-height: 21px;
+}
+
+.navigation a {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.navigation span { display: block; white-space: nowrap; }
+
+.navigation [lang="hi"] {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 300;
+  line-height: 22px;
+}
+
+.navigation-english { opacity: 0.6; }
+.navigation a:hover .navigation-english,
+.navigation a[aria-current="page"] .navigation-english { opacity: 1; }
+
+.navigation a:focus-visible,
+.return-home:focus-visible {
+  outline: 1px solid var(--home-foreground);
+  outline-offset: 2px;
+}
+
+.wordmark {
+  width: 100%;
+  height: calc(var(--home-title-size) * 1.2);
+}
+
+.wordmark-effect { width: 100%; height: 100%; }
+
+.wordmark-text {
+  margin: 0;
+  white-space: nowrap;
+  color: var(--home-foreground);
+  font-size: 0;
+  line-height: 0;
+}
+
+.mess { font-size: 111px; font-weight: 700; }
+.tripping { font-size: 32px; font-weight: 100; }
+
+.wordmark-text .mess { font-size: var(--home-title-size); line-height: 1.2; }
+.wordmark-text .tripping { font-size: calc(var(--home-title-size) * 0.2883); line-height: 1.2; }
+
+.biography {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: max(1148px, 100svh);
+  padding: 64px 64px 50px;
+  background: var(--biography-background);
+  font-weight: 300;
+}
+
+.biography a { color: inherit; }
+
+.biography [lang="hi"] {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 300;
+}
+
+.return-home {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 27px;
+  font-size: 17px;
+  text-decoration: none;
+}
+
+.return-home span:last-child { opacity: 0.6; }
+
+.back-arrow { font-size: 22px; font-weight: 200; }
+
+.biography-introduction {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: min(1000px, calc(100% - 300px));
+  padding-top: 100px;
+}
+
+.biography-heading { display: flex; flex-direction: column; gap: 10px; }
+.biography-heading > p { font-size: 25px; line-height: 33px; }
+
+.biography-heading h1 {
+  font-size: 104px;
+  font-weight: 300;
+  line-height: 114px;
+  letter-spacing: -5px;
+}
+
+.biography-copy { display: flex; align-items: flex-start; gap: 40px; }
+
+.copy-guidance {
+  display: flex;
+  flex: 0 0 176px;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 7px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.copy-guidance p:first-child { font-weight: 400; }
+.copy-guidance p:last-child { color: var(--biography-secondary); }
+
+.personal-introduction {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 660px;
+  max-width: calc(100% - 216px);
+  font-size: 25px;
+  line-height: 39px;
+}
+
+.brand-signature { width: 100%; margin-top: auto; padding-top: 300px; }
+.footer-rule { height: 1px; background: rgb(255 255 255 / 25%); }
+
+.signature-context {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-top: 28px;
+}
+
+.signature-wordmark { white-space: nowrap; font-size: 0; }
+.signature-wordmark .mess { line-height: 115px; letter-spacing: -4px; }
+.signature-wordmark .tripping { line-height: 36.8px; letter-spacing: -0.8px; }
+.page-context { padding-bottom: 0; color: var(--biography-secondary); font-size: 13px; line-height: 16px; white-space: nowrap; }
+
+.games-page {
+  position: relative;
+  min-height: 100svh;
+  padding: 64px 64px 50px;
+  background: var(--biography-background);
+  font-weight: 300;
+}
+
+.games-page a { color: inherit; }
+.games-page [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
+.games-introduction { width: calc(100% - 220px); padding-top: 92px; }
+.games-heading > p { font-size: 25px; line-height: 33px; }
+.games-heading h1 { margin-top: 10px; font-size: 104px; line-height: 1.1; font-weight: 300; letter-spacing: -5px; }
+.games-count { display: inline-block; margin: 12px 0 0 20px; vertical-align: top; font-size: 14px; letter-spacing: 0; line-height: 1.5; opacity: 0.6; }
+.games-description { margin-top: 24px; font-size: 19px; line-height: 1.6; opacity: 0.7; }
+.game-card { margin-top: 64px; }
+.game-preview { position: relative; display: block; aspect-ratio: 1.95; overflow: hidden; background: #504c79; }
+.game-preview img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 800ms ease; }
+.game-preview:hover img { transform: scale(1.025); }
+.game-preview-caption { position: absolute; bottom: 30px; left: 32px; font-size: 13px; letter-spacing: 0.01em; opacity: 0.8; }
+.game-preview-play { position: absolute; right: 28px; bottom: 24px; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgb(255 255 255 / 35%); border-radius: 50%; font-size: 25px; background: rgb(39 34 70 / 25%); }
+.game-card-details { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; padding-top: 30px; }
+.game-card-title { display: flex; gap: 30px; }
+.game-number { padding-top: 11px; font-size: 13px; opacity: 0.5; }
+.game-card-title h2 { margin: 0; font-size: clamp(26px, 3vw, 38px); line-height: 1.3; font-weight: 300; letter-spacing: -1px; }
+.game-card-title p { max-width: 470px; margin-top: 12px; font-size: 15px; line-height: 1.65; opacity: 0.65; }
+.game-launch { display: flex; align-items: center; flex-shrink: 0; gap: 25px; padding: 9px 0 12px; border-bottom: 1px solid rgb(255 255 255 / 45%); font-size: 17px; text-decoration: none; }
+.game-launch span { font-size: 23px; transition: transform 180ms ease; }
+.game-launch:hover span { transform: translate(2px, -2px); }
+.game-card-notes { display: flex; justify-content: space-between; gap: 20px; padding-top: 25px; margin-top: 28px; border-top: 1px solid rgb(255 255 255 / 20%); font-size: 12px; opacity: 0.55; }
+.games-page .brand-signature { padding-top: 120px; }
+.game-preview:focus-visible, .game-launch:focus-visible { outline: 2px solid white; outline-offset: 5px; }
+
+@media (max-width: 1100px) {
+  .navigation { top: 40px; right: 40px; }
+  .biography { padding: 40px; }
+  .biography-introduction { width: calc(100% - 220px); }
+  .biography-heading h1 { font-size: 80px; letter-spacing: -3px; }
+  .biography-copy { flex-direction: column; gap: 24px; }
+  .copy-guidance { flex-basis: auto; width: 176px; }
+  .personal-introduction { max-width: 100%; }
+  .brand-signature { padding-top: 160px; }
+  .games-page { padding: 40px; }
+  .games-heading h1 { font-size: 80px; letter-spacing: -3px; }
+  .game-card-title { gap: 20px; }
+}
+
+@media (max-width: 640px) {
+  .navigation { top: 24px; right: 24px; }
+  .biography { min-height: 100svh; padding: 24px; }
+  .biography-introduction { width: 100%; padding-top: 335px; gap: 40px; }
+  .biography-heading h1 { font-size: clamp(44px, 13vw, 80px); line-height: 1.1; }
+  .personal-introduction { font-size: 21px; line-height: 1.55; }
+  .brand-signature { padding-top: 100px; }
+  .signature-context { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .signature-wordmark .mess { font-size: clamp(48px, 17vw, 100px); line-height: 1.15; }
+  .signature-wordmark .tripping { font-size: clamp(19px, 5.44vw, 32px); }
+  .games-page { padding: 24px; }
+  .games-introduction { width: 100%; padding-top: 335px; }
+  .games-heading h1 { font-size: clamp(56px, 16vw, 80px); letter-spacing: -3px; }
+  .games-count { margin-top: 6px; margin-left: 12px; }
+  .games-description { font-size: 17px; }
+  .game-card { margin-top: 38px; }
+  .game-preview { aspect-ratio: 1.1; }
+  .game-preview img { object-position: 55% center; }
+  .game-preview-caption { left: 16px; bottom: 18px; max-width: calc(100% - 88px); font-size: 11px; line-height: 1.6; }
+  .game-preview-play { width: 36px; height: 36px; right: 16px; bottom: 16px; font-size: 21px; }
+  .game-card-details { flex-direction: column; gap: 24px; padding-top: 24px; }
+  .game-card-title { gap: 16px; }
+  .game-number { padding-top: 8px; }
+  .game-card-title h2 { font-size: 27px; }
+  .game-card-title p { font-size: 14px; }
+  .game-launch { align-self: flex-end; }
+  .game-card-notes { font-size: 10px; line-height: 1.5; }
+  .games-page .brand-signature { padding-top: 88px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-preview img, .game-launch span { transition: none; }
+}

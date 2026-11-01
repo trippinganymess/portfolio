@@ -1,0 +1,72 @@
+:root { color-scheme: dark; font-family: Inter, "Helvetica Neue", Arial, sans-serif; color: #fff2e8; background: #29243f; font-synthesis: none; }
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+button, input, a { -webkit-tap-highlight-color: transparent; }
+button, a { touch-action: manipulation; }
+button { font: inherit; cursor: pointer; }
+a { color: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #ffdab6; outline-offset: 5px; }
+[hidden] { display: none !important; }
+#canvas-container { position: fixed; inset: 0; background: linear-gradient(#504162, #ba8393 52%, #3e536e 53%, #1e354d); touch-action: none; }
+#canvas-container canvas { display: block; width: 100%; height: 100%; outline: none; cursor: crosshair; }
+.paper-overlay { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 42%, transparent 42%, #211d3559 100%); box-shadow: inset 0 0 80px #2a203929; }
+.topbar { position: fixed; z-index: 5; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 26px 36px; font-size: 12px; letter-spacing: .035em; }
+.back-link { text-decoration: none; display: flex; align-items: center; gap: 9px; padding: 5px 0; text-shadow: 0 1px 12px #241c3b; }
+.back-link > span:first-child { font-size: 20px; margin-right: 3px; }
+.edition { opacity: .72; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+.edition span { padding: 0 10px; opacity: .5; }
+.start-screen { position: fixed; inset: 0; z-index: 3; display: flex; align-items: center; padding: 100px 8vw; background: linear-gradient(90deg, #282138b8 0%, #35274248 40%, transparent 67%); }
+.invitation { margin-top: -15px; max-width: 500px; }
+.eyebrow { font-size: 9px; text-transform: uppercase; letter-spacing: .22em; line-height: 1.7; margin: 0 0 22px; }
+.invitation h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(76px, 8.3vw, 130px); font-weight: 400; line-height: .88; letter-spacing: -.055em; margin: 0 0 28px; text-shadow: 0 4px 30px #3c294c33; }
+.invitation h1 em { color: #f7c6b7; font-weight: 400; }
+.intro { font-size: 13px; font-weight: 300; line-height: 1.9; color: #efdbdf; margin: 0 0 27px; }
+.enter-button { display: inline-flex; align-items: center; justify-content: space-between; gap: 48px; min-width: 217px; padding: 17px 23px; border: 1px solid #f6d9c982; color: #33293c; background: #f5dfce; font-size: 12px; border-radius: 2px; transition: background .2s, transform .2s; }
+.enter-button::after { content: '↗'; font-size: 19px; line-height: 1; }
+.enter-button:hover { background: #ffeddd; transform: translateY(-2px); }
+.enter-button:disabled { cursor: wait; opacity: .6; }
+.loading-note { font-size: 9px; letter-spacing: .08em; color: #e7cfd0a6; margin: 13px 0 0; }
+.start-instructions { position: absolute; left: 8vw; bottom: 32px; margin: 0; font-size: 10px; line-height: 1.8; color: #e8dce0c4; }
+.scene-mark { position: absolute; right: 6vw; top: 31%; margin: 0; font: 22px/1.8 Georgia, serif; color: #f5ded1b3; text-align: center; }
+.scene-mark span { display: block; font: 7px/1 sans-serif; letter-spacing: .22em; margin-top: 18px; writing-mode: vertical-rl; margin-left: 11px; }
+ .victory-screen { position: fixed; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 90px 24px; text-align: center; pointer-events: none; background: radial-gradient(ellipse, #33223d78, #31284512 70%); animation: dream-appear 1.8s ease both; }
+.victory-killed { margin: 0 0 24px; font-size: 11px; letter-spacing: .10em; color: #ffeadb; line-height: 1.8; }
+.victory-screen h2 { margin: 0; font: 400 clamp(44px, 6vw, 86px)/1.04 Georgia, serif; letter-spacing: -.045em; text-shadow: 0 3px 40px #39283c66; }
+.victory-screen h2 em { color: #f6c8c7; font-weight: 400; }
+.haunting-message { margin: 35px 0 0; color: #e5bcc8; font: italic clamp(15px, 2vw, 21px)/1.7 Georgia, serif; letter-spacing: .025em; animation: dream-appear 2.5s ease both; }
+@keyframes dream-appear { from { opacity: 0; filter: blur(8px); transform: translateY(10px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+.audio-status { position: fixed; z-index: 7; bottom: 3px; left: 36px; font-size: 9px; max-width: 80vw; color: #ffdfcb; margin: 0; }
+.audio-status:empty { display: none; }
+.error-screen { position: fixed; z-index: 8; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; gap: 20px; text-align: center; background: #29243ff2; }
+.error-screen h1 { font: 40px Georgia, serif; margin: 0; }
+.error-screen p { line-height: 1.8; max-width: 420px; }
+.error-screen button { background: #f5dfce; color: #33293c; border: 0; padding: 13px 28px; }
+.error-screen a { font-size: 12px; }
+.noscript { position: fixed; inset: 30%; z-index: 10; background: #29243f; padding: 25px; }
+@media (max-width: 760px) {
+  .topbar { padding: 19px 22px; }
+  .edition { font-size: 8px; }
+  .edition span { padding: 0 5px; }
+  .start-screen { padding: 100px 9vw; }
+  .invitation h1 { font-size: clamp(72px, 13vw, 100px); }
+  .start-instructions { left: 9vw; }
+}
+@media (max-width: 480px) {
+  .edition { max-width: 114px; text-align: right; line-height: 1.7; }
+  .scene-mark { right: 9vw; top: 28%; font-size: 18px; }
+  .eyebrow { max-width: 190px; font-size: 8px; }
+  .intro { font-size: 12px; }
+  .start-instructions { bottom: 26px; font-size: 9px; }
+  .audio-status { left: 22px; font-size: 8px; }
+}
+@media (max-height: 550px) and (min-width: 481px) {
+  .topbar { padding: 12px 24px; }
+  .start-screen { padding: 70px 8vw 30px; }
+  .invitation { margin-top: 0; }
+  .invitation h1 { font-size: 66px; margin-bottom: 13px; }
+  .eyebrow { margin-bottom: 12px; }
+  .intro { font-size: 10px; margin-bottom: 14px; }
+  .enter-button { padding: 11px 20px; }
+  .start-instructions { left: auto; right: 8vw; font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) { button { transition: none !important; } .victory-screen, .haunting-message { animation: none; } }

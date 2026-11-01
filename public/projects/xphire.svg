@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" fill="none">
+  <defs>
+    <linearGradient id="background" x1="160" y1="0" x2="1220" y2="760" gradientUnits="userSpaceOnUse"><stop stop-color="#282242"/><stop offset=".5" stop-color="#504269"/><stop offset="1" stop-color="#171a31"/></linearGradient>
+    <radialGradient id="halo"><stop stop-color="#d4b9ff" stop-opacity=".38"/><stop offset=".55" stop-color="#a082d1" stop-opacity=".12"/><stop offset="1" stop-color="#997ad0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="signal"><stop stop-color="#afa2e0" stop-opacity=".05"/><stop offset=".5" stop-color="#f3d8ee" stop-opacity=".85"/><stop offset="1" stop-color="#afa2e0" stop-opacity=".05"/></linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0v48" stroke="#c9b2e3" stroke-opacity=".075"/></pattern>
+    <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+  <path fill="url(#background)" d="M0 0h1440v760H0z"/>
+  <path fill="url(#grid)" d="M0 0h1440v760H0z"/>
+  <ellipse cx="720" cy="335" rx="540" ry="390" fill="url(#halo)"/>
+  <g stroke="url(#signal)" stroke-width="1.5">
+    <path d="M-80 78h335c180 0 190 231 465 231S1100 78 1230 78h270"/>
+    <path d="M-80 168h300c180 0 245 150 500 150s320-150 500-150h280"/>
+    <path d="M-80 258h290c150 0 275 70 510 70s360-70 510-70h270"/>
+    <path d="M-80 575h335c180 0 190-230 465-230s380 230 510 230h270"/>
+    <path d="M-80 485h300c180 0 245-150 500-150s320 150 500 150h280"/>
+  </g>
+  <g stroke="#e7cfef" stroke-opacity=".2"><circle cx="720" cy="335" r="96"/><circle cx="720" cy="335" r="164"/><circle cx="720" cy="335" r="258" stroke-dasharray="2 14"/></g>
+  <g fill="#edcee9"><circle cx="280" cy="80" r="3"/><circle cx="1190" cy="175" r="3"/><circle cx="435" cy="468" r="3"/><circle cx="1024" cy="427" r="3"/></g>
+  <path d="m720 218 18 88 78 29-78 22-18 81-22-81-74-22 74-29Z" fill="#e8c7f1" opacity=".6" filter="url(#glow)"/>
+  <path d="m720 264 12 58 52 13-52 12-12 54-13-54-50-12 50-13Z" fill="#f6e7f8"/>
+  <text x="720" y="137" text-anchor="middle" fill="#cdbedc" font-family="Arial, sans-serif" font-size="12" letter-spacing="6">A SIGNAL WORTH FOLLOWING</text>
+  <text x="720" y="565" text-anchor="middle" fill="#efe4fa" font-family="Arial, sans-serif" font-size="112" font-weight="300" letter-spacing="-7">Xphire</text>
+  <text x="720" y="610" text-anchor="middle" fill="#c0aecf" font-family="monospace" font-size="13" letter-spacing="4">AI / JOB DISCOVERY</text>
+  <path d="M52 52h38M52 52v38m1298-38h38v38M52 632v38h38m1260 0h38v-38" stroke="#c8b6de" stroke-opacity=".32"/>
+</svg>

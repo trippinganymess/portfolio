@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#29243f">
+  <meta name="description" content="Chase a chalk spirit through a dream of Japanese mountains, cherry blossoms and a twilight lake.">
+  <title>Kill a Spirit — सपने Dreams — MESSTripping</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./game.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js"}}</script>
+  <script type="module" src="./boot.js"></script>
+</head>
+<body>
+  <div id="canvas-container" aria-label="Interactive twilight lake. Move or touch the spirit to shatter it."></div>
+  <div class="paper-overlay" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="back-link" href="/dreams"><span aria-hidden="true">←</span> <span lang="hi">सपने</span> Dreams</a>
+    <span class="edition">MESSTripping <span>/</span> Dream no. 01</span>
+  </header>
+
+  <main id="start-screen" class="start-screen">
+    <div class="invitation">
+      <p class="eyebrow">A little game at the edge of evening</p>
+      <h1>Kill a<br><em>Spirit.</em></h1>
+      <p class="intro">A wandering spirit. A lake between worlds.<br>Stay a while. Let the wind find you.</p>
+      <button id="btn-start" class="enter-button" disabled>Painting the dream…</button>
+      <p id="loading-note" class="loading-note" role="status">Preparing the twilight lake</p>
+    </div>
+    <p class="start-instructions">Move your cursor or touch to lure the spirit.<br>Each touch fades it further into the twilight.</p>
+    <p class="scene-mark" aria-hidden="true">夕<br>暮<br>れ<span>TWILIGHT</span></p>
+  </main>
+
+  <section id="victory-screen" class="victory-screen" hidden aria-live="polite" aria-atomic="true">
+    <p class="victory-killed">You have successfully killed the spirit.</p>
+    <h2>You are the<br><em>Spirit Slayer.</em></h2>
+    <p id="haunting-message" class="haunting-message" hidden>Now you will be haunted forever.</p>
+  </section>
+  <p id="audio-status" class="audio-status" role="status"></p>
+  <section id="error-screen" class="error-screen" hidden role="alert">
+    <p class="eyebrow">The dream needs a moment</p>
+    <h1>The lake couldn’t open.</h1>
+    <p id="error-message">Please reload the page in a browser with WebGL enabled.</p>
+    <button onclick="window.location.reload()">Try again</button>
+    <a href="/dreams">Return to Dreams</a>
+  </section>
+  <noscript><p class="noscript">Please enable JavaScript to enter the dream. <a href="/dreams">Return to Dreams</a></p></noscript>
+</body>
+</html>

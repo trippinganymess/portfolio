@@ -1,0 +1,22 @@
+.projects-page .games-heading h1 { overflow-wrap: anywhere; }
+.project-card + .project-card { margin-top: 96px; }
+.project-card .game-card-title { min-width: 0; }
+.project-card .game-card-title > div { min-width: 0; }
+.project-card .game-card-title h2 { overflow-wrap: anywhere; }
+.project-card .game-card-title p { max-width: 570px; }
+.project-card .game-card-notes { flex-wrap: wrap; }
+.project-preview { background: #242036; }
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .projects-page .games-heading h1 { font-size: clamp(52px, 8.5vw, 76px); }
+  .projects-page .games-count { margin-left: 10px; }
+  .project-card .game-card-details { gap: 24px; }
+  .project-card .game-launch { font-size: 14px; gap: 14px; }
+}
+
+@media (max-width: 640px) {
+  .projects-page .games-heading h1 { font-size: clamp(42px, 13vw, 74px); }
+  .project-card + .project-card { margin-top: 64px; }
+  .project-preview img { object-position: center; }
+  .project-card .game-card-notes { gap: 10px 20px; }
+}
