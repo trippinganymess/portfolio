@@ -1,4 +1,5 @@
 import React from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './projects.css';
 
 const projects = [
@@ -99,6 +100,7 @@ export default function Projects({ navigation }) {
           <p className="page-context">MESSTripping / Projects</p>
         </div>
       </footer>
+      <SpeedInsights />
     </main>
   );
 }

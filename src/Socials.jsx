@@ -1,4 +1,5 @@
 import React from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './socials.css';
 
 const profiles = [
@@ -49,6 +50,7 @@ export default function Socials({ navigation }) {
           <p className="page-context">MESSTripping / Socials</p>
         </div>
       </footer>
+      <SpeedInsights />
     </main>
   );
 }
