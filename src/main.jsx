@@ -80,12 +80,12 @@ function Biography() {
         </header>
         <div className="biography-copy" data-node-id="12:34">
           <div className="copy-guidance" data-node-id="12:35">
-            <p data-node-id="12:36">Replaceable biography copy</p>
-            <p data-node-id="12:37">Make the bracketed details your own.</p>
+            <p data-node-id="12:36">For now</p>
+            <p data-node-id="12:37">this is more about me than a biography </p>
           </div>
           <div className="personal-introduction" data-node-id="12:38">
-            <p data-node-id="12:39">I’m [your name or preferred introduction]. My practice brings together [interests or disciplines], with a focus on [what matters to you].</p>
-            <p data-node-id="12:40">I’m drawn to [the questions you keep returning to]. Here, I share [what you make or explore] and the thinking behind it.</p>
+            <p data-node-id="12:39">I’m Animesh Tripathi. My practice brings together Machine learning, API development, and Design,  with a focus on Reliability and user experience.</p>
+            <p data-node-id="12:40">I’m drawn to interactive creative designing, . Here, I share what I am developing, the thinking behind it and some dreams.</p>
           </div>
         </div>
       </section>
@@ -134,7 +134,7 @@ function Dreams() {
               <p>Chase a glow through a Japanese twilight dream. Each touch fades it further into the twilight.</p>
             </div>
           </div>
-          <a className="game-launch" href="/games/kill-a-spirit/index.html">Play game <span aria-hidden="true">↗</span></a>
+          <a className="game-launch" href="/games/kill-a-spirit/index.html">Enter the dream <span aria-hidden="true">↗</span></a>
         </div>
         <div className="game-card-notes">
           <span>3D · Pointer & touch</span>
