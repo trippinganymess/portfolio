@@ -16,7 +16,10 @@ export function useHomeAnimation() {
   const robotRef = useRef(null);
   const stationRef = useRef(null);
   const launchRef = useRef(null);
-  const soundRef = useRef(null);
+  const launchSoundRef = useRef(null);
+  const lightningSoundRef = useRef(null);
+  const repairSoundRef = useRef(null);
+  const listeningSoundRef = useRef(null);
   const dreamsRef = useRef(null);
   const controllerRef = useRef(null);
   const [state, setState] = useState('intact');
@@ -44,7 +47,10 @@ export function useHomeAnimation() {
           flash: flashRef.current,
           robotAnchor: robotRef.current,
           stationElement: stationRef.current,
-          launchSound: soundRef.current,
+          launchSound: launchSoundRef.current,
+          lightningSound: lightningSoundRef.current,
+          repairSound: repairSoundRef.current,
+          listeningSound: listeningSoundRef.current,
           dreamsLink: dreamsRef.current,
           onStateChange: setState,
           onUnavailable: () => {
@@ -113,7 +119,10 @@ export function useHomeAnimation() {
             </svg>
           </button>
         </div>
-        <audio ref={soundRef} src="/audio/robot-launch.mp3" preload="none" aria-hidden="true" />
+        <audio ref={lightningSoundRef} src="/audio/lightning-strike.mp3" preload="auto" aria-hidden="true" />
+        <audio ref={launchSoundRef} src="/audio/robot-launch.mp3" preload="auto" aria-hidden="true" />
+        <audio ref={repairSoundRef} src="/audio/robot-repair.mp3" preload="auto" loop aria-hidden="true" />
+        <audio ref={listeningSoundRef} src="/audio/robot-listening.mp3" preload="metadata" loop aria-hidden="true" />
         <p id="home-animation-status" className="home-animation-status" role="status">{messages[state]}</p>
       </div>
     ),

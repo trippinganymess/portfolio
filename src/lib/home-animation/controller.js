@@ -5,7 +5,7 @@ import { createSketchRobot, ROBOT_HEIGHT } from './robot';
 import { createLandingStation } from './station';
 import { createEffects } from './effects';
 
-export function createHomeAnimation({ stage, canvas, flash, robotAnchor, stationElement, launchSound, dreamsLink, onStateChange, onUnavailable }) {
+export function createHomeAnimation({ stage, canvas, flash, robotAnchor, stationElement, launchSound, lightningSound, repairSound, listeningSound, dreamsLink, onStateChange, onUnavailable }) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -81,12 +81,81 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
   let discharge = 0;
   let shadowRemaining = 0;
   let welding = false;
-  let resumeSound = false;
+  const sounds = [lightningSound, launchSound, repairSound, listeningSound];
+  const activeSounds = new Set();
+  const resumeSounds = new Set();
+  const primedSounds = new Set();
+  const soundVersions = new Map(sounds.map(sound => [sound, 0]));
 
-  function stopLaunchSound() {
-    resumeSound = false;
-    launchSound.pause();
-    if (launchSound.readyState > 0) launchSound.currentTime = 0;
+  function nextSoundVersion(sound) {
+    const version = soundVersions.get(sound) + 1;
+    soundVersions.set(sound, version);
+    return version;
+  }
+
+  function playCurrentSound(sound) {
+    const version = nextSoundVersion(sound);
+    sound.play()?.catch(() => {
+      // A blocked or cancelled cue must never play later, out of sync.
+      if (soundVersions.get(sound) === version) activeSounds.delete(sound);
+    });
+  }
+
+  function playSound(sound, volume) {
+    if (disposed) return;
+    resumeSounds.delete(sound);
+    sound.currentTime = 0;
+    sound.muted = false;
+    sound.volume = volume;
+    activeSounds.add(sound);
+    playCurrentSound(sound);
+  }
+
+  function pauseSound(sound) {
+    nextSoundVersion(sound);
+    activeSounds.delete(sound);
+    resumeSounds.delete(sound);
+    sound.pause();
+    sound.muted = false;
+  }
+
+  function stopSound(sound) {
+    pauseSound(sound);
+    if (sound.readyState > 0) sound.currentTime = 0;
+  }
+
+  function playListeningMusic() {
+    if (disposed || document.hidden || !rig.isBobbing || activeSounds.has(listeningSound)) return;
+    resumeSounds.delete(listeningSound);
+    listeningSound.muted = false;
+    listeningSound.volume = 0.08;
+    activeSounds.add(listeningSound);
+    playCurrentSound(listeningSound);
+  }
+
+  function primeSounds() {
+    if (disposed || document.hidden) return;
+    // Unlock the same media elements during a gesture for later timed cues.
+    // Priming is muted, so the fan is only audible while the torch is working.
+    for (const sound of sounds) {
+      if (activeSounds.has(sound) || primedSounds.has(sound)) continue;
+      if (sound === listeningSound && rig.isBobbing) continue;
+      const version = nextSoundVersion(sound);
+      const position = sound.currentTime;
+      primedSounds.add(sound);
+      sound.muted = true;
+      sound.play()?.then(() => {
+        if (disposed || soundVersions.get(sound) !== version) return;
+        sound.pause();
+        sound.currentTime = position;
+        sound.muted = false;
+      }).catch(() => {
+        if (disposed || soundVersions.get(sound) !== version) return;
+        primedSounds.delete(sound);
+        sound.muted = false;
+      });
+    }
+    playListeningMusic();
   }
 
   function setState(next) {
@@ -99,7 +168,8 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     timeline = null;
     welding = false;
     weldLight.intensity = 0;
-    stopLaunchSound();
+    stopSound(launchSound);
+    stopSound(repairSound);
   }
 
   function newTimeline() {
@@ -177,10 +247,13 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
 
   function strike() {
     strikeRemaining = null;
+    pauseSound(listeningSound);
     effects.createStrike(origin, linkPosition(0.3, 0.5, impact));
     rig.isBobbing = false;
     setState('broken');
     const reaction = newTimeline();
+    // The source's silent lead-in is trimmed to the thunder around 9 seconds.
+    playSound(lightningSound, 0.6);
     reaction.fromTo(motion, { flash: 0.85 }, { flash: 0, duration: 0.32, ease: 'power3.out' }, 0);
     reaction.to(rig.upperBodyGroup.rotation, { z: -0.035, duration: 0.45, ease: 'back.out(1.4)' }, 0);
     reaction.to(rig.headGroup.rotation, { ...lookAtBrokenButton(), duration: 0.65, ease: 'power2.inOut' }, 0.05);
@@ -193,12 +266,14 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     motion.flash = 0;
     setState('launching');
     // Start playback inside the user's click so browser autoplay rules are met.
-    launchSound.volume = 0.55;
-    launchSound.play()?.catch(() => {});
+    primeSounds();
+    playSound(launchSound, 0.55);
     rig.musicPlayerGroup.visible = false;
     rig.headphoneWireMesh.visible = false;
     repairTimeline.to(motion, { facing: 1, duration: 0.32, ease: 'sine.inOut' });
     repairTimeline.to(rig.headGroup.rotation, { y: 0, z: -0.12, duration: 0.32 }, '<');
+    repairTimeline.to(lightningSound, { volume: 0, duration: 0.2 }, 0);
+    repairTimeline.call(() => stopSound(lightningSound), [], 0.2);
     repairTimeline.call(() => {
       setState('fixing');
       rig.weldTorchGroup.visible = true;
@@ -212,21 +287,32 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     repairTimeline.to(rig.shoulderArmGroup.rotation, { z: 0.12, duration: 0.4 }, '-=0.5');
     repairTimeline.to(rig.elbowGroup.rotation, { z: 0.08, duration: 0.4 }, '<');
     repairTimeline.to(launchSound, { volume: 0, duration: 0.3, ease: 'power1.out' }, 'liftOff+=1.4');
-    repairTimeline.call(() => { stopLaunchSound(); welding = true; weldRemaining = 0; });
-    repairTimeline.to(rig.handGroup.rotation, { z: 0.055, duration: 0.13, repeat: 11, yoyo: true });
     repairTimeline.call(() => {
+      stopSound(launchSound);
+      playSound(repairSound, 0.3);
+      welding = true;
+      weldRemaining = 0;
+    });
+    repairTimeline.to(rig.handGroup.rotation, { z: 0.055, duration: 0.13, repeat: 11, yoyo: true });
+    repairTimeline.to(repairSound, { volume: 0, duration: 0.16 }, '-=0.16');
+    repairTimeline.call(() => {
+      stopSound(repairSound);
       welding = false;
       weldLight.intensity = 0;
       rig.weldTorchGroup.visible = false;
       setState('fixed');
       effects.sparks(linkPosition(0.22, 0.4, weldSpot), 14, 0xe6f3ff, 100);
     });
-    repairTimeline.to(motion, { travel: 0, duration: 1.4, ease: 'power3.inOut' }, '+=0.2');
+    repairTimeline.addLabel('returnToPad', '+=0.2');
+    repairTimeline.call(() => playSound(launchSound, 0.48), [], 'returnToPad');
+    repairTimeline.to(motion, { travel: 0, duration: 1.4, ease: 'power3.inOut' }, 'returnToPad');
     repairTimeline.to(rig.shoulderArmGroup.rotation, { z: 0, duration: 0.5 }, '-=0.65');
     repairTimeline.to(rig.elbowGroup.rotation, { z: 0, duration: 0.5 }, '<');
     repairTimeline.to(rig.headGroup.rotation, { z: -0.12, y: 0, duration: 0.5 }, '<');
     repairTimeline.to(rig.handGroup.rotation, { z: 0, duration: 0.5 }, '<');
+    repairTimeline.to(launchSound, { volume: 0, duration: 0.18 }, 'returnToPad+=1.22');
     repairTimeline.call(() => {
+      stopSound(launchSound);
       rig.flameGroup.visible = false;
       rig.isFlying = false;
     });
@@ -235,6 +321,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
       rig.musicPlayerGroup.visible = true;
       rig.headphoneWireMesh.visible = true;
       rig.isBobbing = true;
+      playListeningMusic();
     });
   }
 
@@ -320,13 +407,18 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     cancelAnimationFrame(frame);
     lastFrame = null;
     if (document.hidden) {
-      resumeSound = !launchSound.paused && !launchSound.ended;
-      launchSound.pause();
-    } else if (!disposed) {
-      if (resumeSound) {
-        resumeSound = false;
-        launchSound.play()?.catch(() => {});
+      for (const sound of sounds) {
+        nextSoundVersion(sound);
+        if (activeSounds.has(sound) && !sound.ended) resumeSounds.add(sound);
+        sound.pause();
+        if (!activeSounds.has(sound)) sound.muted = false;
       }
+    } else if (!disposed) {
+      for (const sound of resumeSounds) {
+        if (activeSounds.has(sound)) playCurrentSound(sound);
+      }
+      resumeSounds.clear();
+      playListeningMusic();
       frame = requestAnimationFrame(animate);
     }
   }
@@ -353,9 +445,12 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     disposed = true;
     cancelAnimationFrame(frame);
     cancelTimeline();
+    sounds.forEach(stopSound);
     resizeObserver?.disconnect();
     window.removeEventListener('resize', resize);
     document.removeEventListener('visibilitychange', visibilityChanged);
+    document.removeEventListener('pointerdown', primeSounds, true);
+    document.removeEventListener('keydown', primeSounds, true);
     canvas.removeEventListener('webglcontextlost', contextLost);
     effects.dispose();
     disposeResources(robot);
@@ -375,9 +470,14 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     resizeObserver.observe(dreamsLink.offsetParent);
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', visibilityChanged);
+    document.addEventListener('pointerdown', primeSounds, true);
+    document.addEventListener('keydown', primeSounds, true);
     canvas.addEventListener('webglcontextlost', contextLost);
     resize();
-    if (!document.hidden) frame = requestAnimationFrame(animate);
+    if (!document.hidden) {
+      playListeningMusic();
+      frame = requestAnimationFrame(animate);
+    }
   } catch (error) {
     dispose();
     throw error;
