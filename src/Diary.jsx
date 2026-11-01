@@ -1,4 +1,5 @@
 import React from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './diary.css';
 
 export default function Diary({ navigation }) {
@@ -29,6 +30,7 @@ export default function Diary({ navigation }) {
           <p className="page-context">MESSTripping / Diary</p>
         </div>
       </footer>
+      <SpeedInsights />
     </main>
   );
 }

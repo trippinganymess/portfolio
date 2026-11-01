@@ -9,6 +9,7 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "@vercel/speed-insights": "^2.0.0",
     "gsap": "3.12.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",

@@ -1,5 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Projects from './Projects';
 import Socials from './Socials';
 import Diary from './Diary';
@@ -63,6 +64,7 @@ function Home() {
           <h1 className="wordmark-text"><span className="mess">MESS</span><span className="tripping">Tripping</span></h1>
         </ShaderEffect>
       </div>
+      <SpeedInsights />
     </main>
   );
 }
@@ -101,6 +103,7 @@ function Biography() {
           <p className="page-context" data-node-id="12:45">MESSTripping / Biography</p>
         </div>
       </footer>
+      <SpeedInsights />
     </main>
   );
 }
@@ -153,6 +156,7 @@ function Dreams() {
           <p className="page-context">MESSTripping / Dreams</p>
         </div>
       </footer>
+      <SpeedInsights />
     </main>
   );
 }
