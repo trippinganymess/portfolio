@@ -30,6 +30,20 @@ html, body, #root {
 
 body { min-width: 240px; }
 
+.fireflies {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fireflies { display: none; }
+}
+
 main[tabindex="-1"]:focus { outline: none; }
 
 .visually-hidden {

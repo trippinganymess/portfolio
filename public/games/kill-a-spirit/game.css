@@ -41,12 +41,12 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 @keyframes dream-appear { from { opacity: 0; filter: blur(8px); transform: translateY(10px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 .audio-status { position: fixed; z-index: 7; bottom: 3px; left: 36px; font-size: calc(9px * var(--text-scale)); max-width: 80vw; color: var(--page-foreground); margin: 0; }
 .audio-status:empty { display: none; }
-.error-screen { position: fixed; z-index: 8; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; gap: 20px; text-align: center; background: #262d17f2; }
+.error-screen { position: fixed; z-index: 8; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; gap: 20px; text-align: center; background: color-mix(in srgb, var(--page-background) 95%, transparent); }
 .error-screen h1 { font: calc(40px * var(--text-scale)) var(--font-display); margin: 0; }
 .error-screen p { line-height: 1.8; max-width: 420px; }
 .error-screen button { background: var(--page-foreground); color: var(--page-background); border: 0; padding: 13px 28px; }
 .error-screen a { font-size: calc(12px * var(--text-scale)); }
-.noscript { position: fixed; inset: 30%; z-index: 10; background: #262d17; padding: 25px; }
+.noscript { position: fixed; inset: 30%; z-index: 10; background: var(--page-background); padding: 25px; }
 @media (max-width: 760px) {
   .topbar { padding: 19px 22px; }
   .edition { font-size: calc(8px * var(--text-scale)); }

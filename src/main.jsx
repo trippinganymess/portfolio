@@ -5,6 +5,7 @@ import ArrowIcon from './ArrowIcon';
 import Projects from './Projects';
 import Socials from './Socials';
 import Game from './Game';
+import Fireflies from './Fireflies';
 import { getPage, useSiteNavigation } from './useSiteNavigation';
 import { useHomeAnimation } from './HomeAnimation';
 import { useDreamsSpark } from './DreamsSpark';
@@ -150,12 +151,20 @@ function App() {
     document.title = pageTitles[page];
   }, [page]);
 
-  if (page === 'socials') return <Socials navigation={<Navigation currentPage="Socials" />} />;
-  if (page === 'projects') return <Projects navigation={<Navigation currentPage="Projects" />} />;
-  if (page === 'dreams') return <Dreams />;
-  if (page === 'biography') return <Biography />;
-  if (page === 'game') return <Game onNavigate={onNavigate} />;
-  return <Home />;
+  let content;
+  if (page === 'socials') content = <Socials navigation={<Navigation currentPage="Socials" />} />;
+  else if (page === 'projects') content = <Projects navigation={<Navigation currentPage="Projects" />} />;
+  else if (page === 'dreams') content = <Dreams />;
+  else if (page === 'biography') content = <Biography />;
+  else if (page === 'game') content = <Game onNavigate={onNavigate} />;
+  else content = <Home />;
+
+  return (
+    <>
+      <Fireflies enabled={page !== 'game'} />
+      {content}
+    </>
+  );
 }
 
 createRoot(document.getElementById('root')).render(<App />);

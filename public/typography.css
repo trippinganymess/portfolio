@@ -6,7 +6,8 @@
   font-size: calc(16px * var(--text-scale));
   --font-body: 'Pricedown Bl', sans-serif;
   --font-display: 'Honk', sans-serif;
-  --page-background: #262d17;
+  --page-background-olive: #262d17;
+  --page-background: #000000;
   --page-foreground: #dcc2b6;
   --page-secondary: #c9b1a5;
   --title-foreground: #b8a197;
