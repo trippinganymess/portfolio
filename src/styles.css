@@ -1,13 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;700&family=Noto+Sans+Devanagari:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Limelight&family=Noto+Sans+Devanagari:wght@300&display=swap');
 
 :root {
-  --home-background: rgb(34.943042770028114 45.521215349435806 193.61572265625);
-  --home-foreground: #fff;
-  --biography-background: #2929c7;
-  --biography-secondary: #d6d6f6;
-  font-family: Inter, sans-serif;
+  --home-background: #000;
+  --home-foreground: #ccc;
+  --biography-background: #000;
+  --biography-secondary: #aaa;
+  --page-texture: url('/textures/paper-grain.svg');
+  font-family: 'Limelight', serif;
+  font-weight: 400;
   color: var(--home-foreground);
-  background: var(--home-background);
+  background: var(--home-background) var(--page-texture) repeat;
   font-synthesis: none;
 }
 
@@ -41,7 +43,7 @@ main[tabindex="-1"]:focus { outline: none; }
   z-index: 10;
   padding: 12px 16px;
   color: #fff;
-  background: #171775;
+  background: #000;
   transform: translateY(calc(-100% - 12px));
 }
 
@@ -77,6 +79,7 @@ main[tabindex="-1"]:focus { outline: none; }
   min-height: max(610px, 100svh);
   padding: 0 0 1px 1px;
   overflow: hidden;
+  background: var(--home-background) var(--page-texture) repeat;
 }
 
 .home .site-header { padding: 64px; }
@@ -86,7 +89,7 @@ main[tabindex="-1"]:focus { outline: none; }
   margin-left: auto;
   max-width: 100%;
   font-size: 17px;
-  font-weight: 100;
+  font-weight: 400;
   line-height: 21px;
 }
 
@@ -142,8 +145,8 @@ main[tabindex="-1"]:focus { outline: none; }
   line-height: 0;
 }
 
-.mess { font-size: 111px; font-weight: 700; }
-.tripping { font-size: 32px; font-weight: 100; }
+.mess { font-size: 111px; font-weight: 400; }
+.tripping { font-size: 32px; font-weight: 400; }
 
 .wordmark-text .mess { font-size: var(--home-title-size); line-height: 1.2; }
 .wordmark-text .tripping { font-size: calc(var(--home-title-size) * 0.2883); line-height: 1.2; }
@@ -155,8 +158,8 @@ main[tabindex="-1"]:focus { outline: none; }
   align-items: flex-start;
   min-height: max(1148px, 100svh);
   padding: 64px 64px 50px;
-  background: var(--biography-background);
-  font-weight: 300;
+  background: var(--biography-background) var(--page-texture) repeat;
+  font-weight: 400;
 }
 
 .biography a { color: inherit; }
@@ -177,7 +180,8 @@ main[tabindex="-1"]:focus { outline: none; }
 
 .return-home span:last-child { opacity: 0.75; }
 
-.back-arrow { font-size: 22px; font-weight: 200; }
+.arrow-icon { display: block; width: 1em; height: 1em; flex-shrink: 0; }
+.back-arrow { font-size: 22px; }
 
 .biography-introduction {
   display: flex;
@@ -192,32 +196,24 @@ main[tabindex="-1"]:focus { outline: none; }
 
 .biography-heading h1 {
   font-size: 104px;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 114px;
   letter-spacing: -5px;
 }
 
-.biography-copy { display: flex; align-items: flex-start; gap: 40px; }
+.biography-copy { display: flex; align-items: flex-end; gap: 40px; }
 
-.copy-guidance {
-  display: flex;
-  flex: 0 0 176px;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 7px;
-  font-size: 13px;
-  line-height: 20px;
-}
-
-.copy-guidance p:first-child { font-weight: 400; }
-.copy-guidance p:last-child { color: var(--biography-secondary); }
+.biography-portrait { flex: 0 0 300px; width: min(300px, 100%); margin: 0; }
+.biography-portrait img { display: block; width: 100%; height: auto; }
 
 .personal-introduction {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: 660px;
-  max-width: calc(100% - 216px);
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 660px;
   font-size: 25px;
   line-height: 39px;
 }
@@ -244,15 +240,15 @@ main[tabindex="-1"]:focus { outline: none; }
   flex-direction: column;
   min-height: 100svh;
   padding: 64px 64px 50px;
-  background: var(--biography-background);
-  font-weight: 300;
+  background: var(--biography-background) var(--page-texture) repeat;
+  font-weight: 400;
 }
 
 .games-page a { color: inherit; }
 .games-page [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
 .games-introduction { width: 100%; padding-top: 92px; }
 .games-heading > p { font-size: 25px; line-height: 33px; }
-.games-heading h1 { margin-top: 10px; font-size: 104px; line-height: 1.1; font-weight: 300; letter-spacing: -5px; }
+.games-heading h1 { margin-top: 10px; font-size: 104px; line-height: 1.1; font-weight: 400; letter-spacing: -5px; }
 .games-count { display: inline-block; margin: 12px 0 0 20px; vertical-align: top; font-size: 14px; letter-spacing: 0; line-height: 1.5; opacity: 0.75; }
 .games-description { margin-top: 24px; font-size: 19px; line-height: 1.6; opacity: 0.7; }
 .game-card { margin-top: 64px; }
@@ -261,25 +257,22 @@ main[tabindex="-1"]:focus { outline: none; }
 .game-preview:hover img { transform: scale(1.025); }
 .game-preview-caption { position: absolute; bottom: 30px; left: 32px; font-size: 13px; letter-spacing: 0.01em; opacity: 0.8; }
 .game-preview-play { position: absolute; right: 28px; bottom: 24px; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgb(255 255 255 / 35%); border-radius: 50%; font-size: 25px; background: rgb(39 34 70 / 25%); }
-.game-card-details { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; padding-top: 30px; }
+.game-card-details { padding-top: 30px; }
 .game-card-title { display: flex; gap: 30px; }
 .game-number { padding-top: 11px; font-size: 13px; opacity: 0.75; }
-.game-card-title h2 { margin: 0; font-size: clamp(26px, 3vw, 38px); line-height: 1.3; font-weight: 300; letter-spacing: -1px; }
+.game-card-title h2 { margin: 0; font-size: clamp(26px, 3vw, 38px); line-height: 1.3; font-weight: 400; letter-spacing: -1px; }
 .game-card-title p { max-width: 470px; margin-top: 12px; font-size: 15px; line-height: 1.65; opacity: 0.65; }
-.game-launch { display: flex; align-items: center; flex-shrink: 0; gap: 25px; padding: 9px 0 12px; border-bottom: 1px solid rgb(255 255 255 / 45%); font-size: 17px; text-decoration: none; }
-.game-launch span { font-size: 23px; transition: transform 180ms ease; }
-.game-launch:hover span { transform: translate(2px, -2px); }
 .game-card-notes { display: flex; justify-content: space-between; gap: 20px; padding-top: 25px; margin-top: 28px; border-top: 1px solid rgb(255 255 255 / 20%); font-size: 12px; opacity: 0.75; }
 .games-page .brand-signature { padding-top: 120px; }
-.game-preview:focus-visible, .game-launch:focus-visible { outline: 2px solid white; outline-offset: 5px; }
+.game-preview:focus-visible { outline: 2px solid white; outline-offset: 5px; }
 
 @media (max-width: 1100px) {
   .home .site-header { padding: 40px; }
   .navigation ul { column-gap: 20px; }
   .biography { padding: 40px; }
   .biography-heading h1 { font-size: 80px; letter-spacing: -3px; }
-  .biography-copy { flex-direction: column; gap: 24px; }
-  .copy-guidance { flex-basis: auto; width: 176px; }
+  .biography-copy { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .biography-portrait { flex-basis: auto; }
   .personal-introduction { max-width: 100%; }
   .brand-signature { padding-top: 160px; }
   .games-page { padding: 40px; }
@@ -309,16 +302,15 @@ main[tabindex="-1"]:focus { outline: none; }
   .game-preview img { object-position: 55% center; }
   .game-preview-caption { left: 16px; bottom: 18px; max-width: calc(100% - 88px); font-size: 11px; line-height: 1.6; }
   .game-preview-play { width: 36px; height: 36px; right: 16px; bottom: 16px; font-size: 21px; }
-  .game-card-details { flex-direction: column; gap: 24px; padding-top: 24px; }
+  .game-card-details { padding-top: 24px; }
   .game-card-title { gap: 16px; }
   .game-number { padding-top: 8px; }
   .game-card-title h2 { font-size: 27px; }
   .game-card-title p { font-size: 14px; }
-  .game-launch { align-self: flex-end; }
   .game-card-notes { font-size: 10px; line-height: 1.5; }
   .games-page .brand-signature { padding-top: 88px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .game-preview img, .game-launch span { transition: none; }
+  .game-preview img { transition: none; }
 }

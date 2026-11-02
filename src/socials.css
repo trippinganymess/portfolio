@@ -19,7 +19,7 @@
 .socials-name { display: flex; align-items: center; gap: 18px; font-size: clamp(24px, 3vw, 38px); letter-spacing: -1px; }
 .socials-logo { display: block; width: 32px; height: 32px; flex-shrink: 0; object-fit: contain; filter: brightness(0) invert(1); }
 .socials-handle { font-size: 15px; opacity: .65; overflow-wrap: anywhere; }
-.socials-arrow { font-size: 28px; font-weight: 200; transition: transform 180ms ease; }
+.socials-arrow { font-size: 28px; transition: transform 180ms ease; }
 .socials-list a:hover .socials-handle { opacity: 1; }
 .socials-list a:hover .socials-arrow { transform: translate(3px, -3px); }
 .socials-list a:focus-visible { outline: 2px solid white; outline-offset: 5px; }

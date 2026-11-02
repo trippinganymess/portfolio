@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import PageLayout from './PageLayout';
+import ArrowIcon from './ArrowIcon';
 import Projects from './Projects';
 import Socials from './Socials';
-import Diary from './Diary';
 import Game from './Game';
 import { getPage, useSiteNavigation } from './useSiteNavigation';
 import { useHomeAnimation } from './HomeAnimation';
@@ -28,10 +28,9 @@ const shaders = [{
 }];
 
 const links = [
-  { hindi: 'आत्मकथा', english: 'Biography', href: '/biography', source: 'https://placeholder.biography.com', node: '1:4' },
+  { hindi: 'मेरे बारे में', english: 'About Me', href: '/biography', source: 'https://placeholder.biography.com', node: '1:4' },
   { hindi: 'प्रोजैक्ट', english: 'Projects', href: '/projects', node: '1:65' },
   { hindi: 'सोशल', english: 'Socials', href: '/socials', node: '1:65' },
-  { hindi: 'डायरी', english: 'Diary', href: '/diary', node: '1:65' },
   { hindi: 'सपने', english: 'Dreams', href: '/dreams' },
 ];
 
@@ -75,17 +74,16 @@ function Home() {
 
 function Biography() {
   return (
-    <PageLayout className="biography" titleId="biography-title" pageName="Biography" navigation={<Navigation currentPage="Biography" />} data-figma-page="placeholder.biography.com" data-node-id="12:3">
+    <PageLayout className="biography" titleId="biography-title" pageName="About Me" navigation={<Navigation currentPage="About Me" />} data-figma-page="placeholder.biography.com" data-node-id="12:3">
       <section className="biography-introduction" aria-labelledby="biography-title" data-node-id="12:30">
         <header className="biography-heading" data-node-id="12:31">
-          <p lang="hi" data-node-id="12:32">आत्मकथा</p>
-          <h1 id="biography-title" data-node-id="12:33">Biography</h1>
+          <p lang="hi" data-node-id="12:32">मेरे बारे में</p>
+          <h1 id="biography-title" data-node-id="12:33">About Me</h1>
         </header>
         <div className="biography-copy" data-node-id="12:34">
-          <div className="copy-guidance" data-node-id="12:35">
-            <p data-node-id="12:36">For now</p>
-            <p data-node-id="12:37">this is more about me than a biography </p>
-          </div>
+          <figure className="biography-portrait">
+            <img src="/about/animesh-tripathi.png" alt="Portrait of Animesh Tripathi" width="500" height="500" />
+          </figure>
           <div className="personal-introduction" data-node-id="12:38">
             <p data-node-id="12:39">I’m Animesh Tripathi. My practice brings together Machine learning, API development, and Design,  with a focus on Reliability and user experience.</p>
             <p data-node-id="12:40">I’m drawn to interactive creative designing, . Here, I share what I am developing, the thinking behind it and some dreams.</p>
@@ -111,7 +109,7 @@ function Dreams() {
         <a className="game-preview" href="/games/kill-a-spirit/index.html" aria-label="Play Kill a Spirit">
           <img src="/games/kill-a-spirit/poster.svg" alt="A glowing chalk spirit above a Japanese lake, with rose-colored mountains, a twilight sun, and cherry blossom trees." width="1440" height="760" />
           <span className="game-preview-caption">A little strange. A little serene.</span>
-          <span className="game-preview-play" aria-hidden="true">↗</span>
+          <span className="game-preview-play" aria-hidden="true"><ArrowIcon /></span>
         </a>
 
         <div className="game-card-details">
@@ -122,7 +120,6 @@ function Dreams() {
               <p>Chase a glow through a Japanese twilight dream. Each touch fades it further into the twilight.</p>
             </div>
           </div>
-          <a className="game-launch" href="/games/kill-a-spirit/index.html" aria-label="Enter the dream: Kill a Spirit">Enter the dream <span aria-hidden="true">↗</span></a>
         </div>
         <footer className="game-card-notes">
           <span>3D · Pointer & touch</span>
@@ -135,10 +132,9 @@ function Dreams() {
 
 const pageTitles = {
   home: 'MESSTripping',
-  biography: 'Biography — MESSTripping',
+  biography: 'मेरे बारे में About Me — MESSTripping',
   projects: 'प्रोजैक्ट Projects — MESSTripping',
   socials: 'सोशल Socials — MESSTripping',
-  diary: 'डायरी Diary — MESSTripping',
   dreams: 'सपने Dreams — MESSTripping',
   game: 'Kill a Spirit — सपने Dreams — MESSTripping',
 };
@@ -151,7 +147,6 @@ function App() {
     document.title = pageTitles[page];
   }, [page]);
 
-  if (page === 'diary') return <Diary navigation={<Navigation currentPage="Diary" />} />;
   if (page === 'socials') return <Socials navigation={<Navigation currentPage="Socials" />} />;
   if (page === 'projects') return <Projects navigation={<Navigation currentPage="Projects" />} />;
   if (page === 'dreams') return <Dreams />;

@@ -44,22 +44,6 @@ function jaggedPath(start, end, segments, sway) {
   return points;
 }
 
-function strikePaths(start, target) {
-  const distance = start.distanceTo(target);
-  const mainPoints = jaggedPath(start, target, 70, Math.min(70, distance * 0.07));
-  const branches = [];
-  for (let index = 0; index < 3; index++) {
-    const origin = mainPoints[Math.floor(12 + index * 14 + Math.random() * 6)].clone();
-    const end = origin.clone().add(new THREE.Vector3(
-      (Math.random() - 0.2) * 180,
-      (Math.random() - 0.7) * 160,
-      0,
-    ));
-    branches.push(jaggedPath(origin, end, 18, 45));
-  }
-  return { mainPoints, branches };
-}
-
 // Screen-facing ribbons retain the hard, irregular bends of an electric arc.
 function arcRibbon(points, width) {
   const vertices = [];
@@ -103,35 +87,20 @@ function disposeObjects(root) {
 
 export function createEffects(scene) {
   const root = new THREE.Group();
-  const scorchGroup = new THREE.Group();
-  const boltGroup = new THREE.Group();
   const particleGroup = new THREE.Group();
   const arcGroup = new THREE.Group();
-  root.add(scorchGroup, boltGroup, particleGroup, arcGroup);
+  root.add(particleGroup, arcGroup);
   scene.add(root);
 
-  const scorchTexture = radialTexture([
-    [0, 'rgba(2, 3, 8, 0.86)'],
-    [0.35, 'rgba(8, 10, 22, 0.56)'],
-    [0.7, 'rgba(15, 18, 38, 0.18)'],
-    [1, 'rgba(0, 0, 0, 0)'],
-  ]);
   const sparkTexture = radialTexture([
     [0, 'rgba(255, 255, 255, 1)'],
     [0.2, 'rgba(255, 255, 255, 0.85)'],
     [0.5, 'rgba(255, 255, 255, 0.2)'],
     [1, 'rgba(0, 0, 0, 0)'],
   ]);
-  const exhaustTexture = radialTexture([
-    [0, 'rgba(217, 243, 255, 0.7)'],
-    [0.4, 'rgba(130, 188, 255, 0.22)'],
-    [1, 'rgba(30, 30, 40, 0)'],
-  ]);
   const noteTextures = [noteTexture('♪'), noteTexture('♫')];
-  const textures = [scorchTexture, sparkTexture, exhaustTexture, ...noteTextures];
-  const particleSystems = [];
+  const textures = [sparkTexture, ...noteTextures];
   const notes = [];
-  const scorchMaterials = [];
   const arcs = [];
   const hotSparks = [];
   const sparkLimit = 320;
@@ -151,101 +120,10 @@ export function createEffects(scene) {
   const tips = new THREE.Points(tipGeometry, new THREE.PointsMaterial({ map: sparkTexture, size: 4, sizeAttenuation: false, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
   trails.frustumCulled = tips.frustumCulled = false;
   root.add(trails, tips);
-  let boltAge = null;
   let disposed = false;
 
   function clearGroup(group) {
     [...group.children].forEach(disposeObjects);
-  }
-
-  function createScorch(mainPoints, branches, target) {
-    const positions = [];
-    function trace(points, steps, scatter, depth) {
-      for (let index = 0; index < points.length - 1; index++) {
-        for (let step = 0; step < steps; step++) {
-          const point = new THREE.Vector3().lerpVectors(points[index], points[index + 1], step / steps);
-          positions.push(
-            point.x + (Math.random() - 0.5) * scatter,
-            point.y + (Math.random() - 0.5) * scatter,
-            depth,
-          );
-        }
-      }
-    }
-    function smudge(origin, count, radius) {
-      for (let index = 0; index < count; index++) {
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * radius;
-        positions.push(origin.x + Math.cos(angle) * distance, origin.y + Math.sin(angle) * distance, -19);
-      }
-    }
-    trace(mainPoints, 2, 4, -20);
-    branches.forEach((points) => trace(points, 1, 3, -22));
-    smudge(mainPoints[0], 8, 20);
-    smudge(target, 12, 24);
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    const material = new THREE.PointsMaterial({
-      map: scorchTexture,
-      size: 18,
-      transparent: true,
-      opacity: 0,
-      depthWrite: false,
-    });
-    scorchGroup.add(new THREE.Points(geometry, material));
-    scorchMaterials.push({ material, opacity: 0.2, age: 0 });
-
-    const lineGeometry = arcRibbon(mainPoints, 0.6);
-    const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x05060d, transparent: true, opacity: 0 });
-    const line = new THREE.Mesh(lineGeometry, lineMaterial);
-    line.position.z = -15;
-    scorchGroup.add(line);
-    scorchMaterials.push({ material: lineMaterial, opacity: 0.12, age: 0 });
-  }
-
-  function createStrike(start, target) {
-    if (disposed) return;
-    clearGroup(boltGroup);
-    const { mainPoints, branches } = strikePaths(start, target);
-    createScorch(mainPoints, branches, target);
-
-    buildArc(boltGroup, mainPoints, 1.5);
-    branches.forEach((points) => buildArc(boltGroup, points, 0.65));
-    boltAge = 0;
-    sparks(target, 44, 0xd9ebff, 230);
-    sparks(target, 17, 0xffc77a, 150);
-    shortCircuit(target, 1.7);
-  }
-
-  function resizeStrike(start, target) {
-    if (disposed) return;
-    clearGroup(scorchGroup);
-    clearGroup(boltGroup);
-    scorchMaterials.length = 0;
-    boltAge = null;
-    const { mainPoints, branches } = strikePaths(start, target);
-    createScorch(mainPoints, branches, target);
-    scorchMaterials.forEach((scorch) => {
-      scorch.age = 0.18;
-      scorch.material.opacity = scorch.opacity;
-    });
-  }
-
-  function addParticles(positions, velocities, options, life, decay) {
-    const geometry = new THREE.BufferGeometry();
-    const attribute = new THREE.BufferAttribute(positions, 3);
-    attribute.setUsage(THREE.DynamicDrawUsage);
-    geometry.setAttribute('position', attribute);
-    const material = new THREE.PointsMaterial({
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      ...options,
-    });
-    const points = new THREE.Points(geometry, material);
-    particleGroup.add(points);
-    particleSystems.push({ points, velocities, life, decay });
   }
 
   function sparks(origin, count = 25, color = 0xd7ebff, speed = 150) {
@@ -282,21 +160,6 @@ export function createEffects(scene) {
     arcGroup.add(discharge);
     arcs.push({ group: discharge, age: 0, lifetime: 0.09 + Math.random() * 0.09 });
     sparks(start, Math.round(7 * strength), 0xd7e7ff, 130 * strength);
-  }
-
-  function exhaust(origin, scale = 1) {
-    if (disposed) return;
-    const positions = new Float32Array(12);
-    const velocities = [];
-    for (let index = 0; index < 4; index++) {
-      positions.set([
-        origin.x + (Math.random() - 0.5) * 4 * scale,
-        origin.y + (Math.random() - 0.5) * 2 * scale,
-        origin.z,
-      ], index * 3);
-      velocities.push({ x: (Math.random() - 0.5) * 35 * scale, y: (-75 - Math.random() * 50) * scale, gravity: -20 });
-    }
-    addParticles(positions, velocities, { map: exhaustTexture, size: 10 * scale, opacity: 0.5, toneMapped: false }, 0.5, 2.1);
   }
 
   function musicNote(origin, scale = 1) {
@@ -357,25 +220,6 @@ export function createEffects(scene) {
     for (const attribute of [trailPositions, trailColors, tipPositions, tipColors]) attribute.needsUpdate = true;
     trailGeometry.setDrawRange(0, hotSparks.length * 2);
     tipGeometry.setDrawRange(0, hotSparks.length);
-    if (boltAge !== null) {
-      boltAge += step;
-      if (boltAge >= 0.32) {
-        clearGroup(boltGroup);
-        boltAge = null;
-      } else {
-        const flicker = boltAge < 0.035 ? 1 : boltAge < 0.075 ? 0.1 : boltAge < 0.12 ? 0.8 : boltAge < 0.17 ? 0 : 0.45;
-        const fade = Math.min(1, (0.32 - boltAge) / 0.1);
-        boltGroup.children.forEach(({ material }) => {
-          material.opacity = material.userData.peakOpacity * flicker * fade;
-        });
-      }
-    }
-    for (const scorch of scorchMaterials) {
-      if (scorch.age >= 0.18) continue;
-      scorch.age = Math.min(0.18, scorch.age + step);
-      const progress = scorch.age / 0.18;
-      scorch.material.opacity = scorch.opacity * (1 - (1 - progress) ** 2);
-    }
     for (let index = notes.length - 1; index >= 0; index--) {
       const note = notes[index];
       note.life -= step * 0.65;
@@ -388,38 +232,16 @@ export function createEffects(scene) {
       note.sprite.position.y += note.y * step;
       note.sprite.material.opacity = Math.min(0.5, note.life * 0.65);
     }
-    for (let index = particleSystems.length - 1; index >= 0; index--) {
-      const system = particleSystems[index];
-      system.life -= step * system.decay;
-      if (system.life <= 0) {
-        disposeObjects(system.points);
-        particleSystems.splice(index, 1);
-        continue;
-      }
-      system.points.material.opacity = Math.max(0, system.life);
-      const attribute = system.points.geometry.attributes.position;
-      system.velocities.forEach((velocity, particle) => {
-        attribute.array[particle * 3] += velocity.x * step;
-        attribute.array[particle * 3 + 1] += velocity.y * step;
-        velocity.y -= velocity.gravity * step;
-      });
-      attribute.needsUpdate = true;
-    }
   }
 
   function clear() {
-    clearGroup(scorchGroup);
-    clearGroup(boltGroup);
     clearGroup(particleGroup);
     clearGroup(arcGroup);
-    hotSparks.length = 0;
     arcs.length = 0;
+    hotSparks.length = 0;
     trailGeometry.setDrawRange(0, 0);
     tipGeometry.setDrawRange(0, 0);
-    particleSystems.length = 0;
     notes.length = 0;
-    scorchMaterials.length = 0;
-    boltAge = null;
   }
 
   function dispose() {
@@ -432,5 +254,5 @@ export function createEffects(scene) {
     disposed = true;
   }
 
-  return { createStrike, resizeStrike, update, sparks, shortCircuit, exhaust, musicNote, clear, dispose };
+  return { update, shortCircuit, musicNote, dispose };
 }

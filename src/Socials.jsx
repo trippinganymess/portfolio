@@ -1,5 +1,6 @@
 import React from 'react';
 import PageLayout from './PageLayout';
+import ArrowIcon from './ArrowIcon';
 import './socials.css';
 
 const profiles = [
@@ -30,7 +31,7 @@ export default function Socials({ navigation }) {
                 {name}
               </span>
               <span className="socials-handle">{handle}</span>
-              <span className="socials-arrow" aria-hidden="true">↗</span>
+              <ArrowIcon className="socials-arrow" />
             </a>
           </li>
         ))}

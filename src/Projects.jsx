@@ -1,5 +1,6 @@
 import React from 'react';
 import PageLayout from './PageLayout';
+import ArrowIcon from './ArrowIcon';
 import './projects.css';
 
 const projects = [
@@ -64,7 +65,7 @@ export default function Projects({ navigation }) {
             <a className="game-preview project-preview" href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`${project.linkLabel || 'View on GitHub'}: ${project.name} (opens in a new tab)`}>
               <img src={`/projects/${project.id}.svg`} alt={project.alt} width="1440" height="760" loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
               <span className="game-preview-caption">{project.caption}</span>
-              <span className="game-preview-play" aria-hidden="true">↗</span>
+              <span className="game-preview-play" aria-hidden="true"><ArrowIcon /></span>
             </a>
 
             <div className="game-card-details">
@@ -75,7 +76,6 @@ export default function Projects({ navigation }) {
                   <p>{project.description}</p>
                 </div>
               </div>
-              <a className="game-launch" href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`${project.linkLabel || 'View on GitHub'}: ${project.name} (opens in a new tab)`}>{project.linkLabel || 'View on GitHub'} <span aria-hidden="true">↗</span></a>
             </div>
 
             <footer className="game-card-notes">

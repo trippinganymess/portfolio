@@ -55,7 +55,6 @@ export function createLandingStation() {
   }
   mesh(deck, new THREE.BoxGeometry(206, 2.4, 2.5), rim, [2, -11, 32]);
   for (let i = 0; i < 9; i++) mesh(deck, new THREE.BoxGeometry(6, 2, 1), dark, [-78 + i * 11, -15, 32]);
-  const launchHousing = mesh(deck, roundedDeck(82, 32, 5, 4), rim, [0, -14, 38]);
 
   // The cantilever is attached to the page edge, including on narrow screens.
   const column = mesh(station, new THREE.BoxGeometry(18, 1, 35), shell, [111, 0, -2]);
@@ -70,8 +69,6 @@ export function createLandingStation() {
   station.userData.resize = (width, height, contactX) => {
     station.scale.x = width / 220;
     landingRings.position.x = contactX / station.scale.x;
-    launchHousing.position.x = (width / 2 - 51) / station.scale.x;
-    launchHousing.scale.x = 1 / station.scale.x;
     dockLight.position.x = landingRings.position.x;
     deck.position.y = height - 14;
     column.scale.y = height + 10;
@@ -81,9 +78,9 @@ export function createLandingStation() {
     bracket.position.y = height - 31;
     foot.position.y = -2;
   };
-  station.userData.update = (elapsed, travel) => {
-    indicator.emissiveIntensity = 0.48 + Math.sin(elapsed * 1.5) * 0.08 + travel * 0.35;
-    dockLight.intensity = 0.6 + travel * 0.5;
+  station.userData.update = elapsed => {
+    indicator.emissiveIntensity = 0.48 + Math.sin(elapsed * 1.5) * 0.08;
+    dockLight.intensity = 0.6;
   };
   return station;
 }

@@ -1588,7 +1588,7 @@ export function initGame() {
     renderer.domElement.addEventListener('pointerenter', () => { cursorGroup.visible = gameStarted && state.status !== 'SLAIN'; });
     renderer.domElement.addEventListener('pointerleave', () => { cursorGroup.visible = false; });
     document.getElementById('btn-start').disabled = false;
-    document.getElementById('btn-start').textContent = 'Enter the dream';
+    document.getElementById('btn-start-label').textContent = 'Enter the dream';
     document.getElementById('loading-note').textContent = 'Headphones recommended';
     // The host disposes the dream when its frame is removed.
     window.killASpirit = { dispose, getState: () => ({
