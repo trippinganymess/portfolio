@@ -9,6 +9,7 @@ const THREE = { ...ThreeCore, EffectComposer, RenderPass, UnrealBloomPass };
 
 export function initGame() {
     let gameStarted = false;
+    let resumeHomeMusic = null;
     let elapsed = 0;
     let windStrength = 0;
     let lastShatterAt = -Infinity;
@@ -1294,6 +1295,7 @@ export function initGame() {
     document.getElementById('btn-start').addEventListener('click', () => {
       if (gameStarted) return;
       gameStarted = true;
+      resumeHomeMusic = window.siteMusic?.suspend();
       elapsed = 0;
       lastFrameAt = performance.now();
       state.spiritPos.set(0, 0.5, 0);
@@ -1315,16 +1317,21 @@ export function initGame() {
       renderer.setSize(w, h);
       if (composer) composer.setSize(w, h);
     });
+    function dispose() {
+      if (disposed) return;
+      disposed = true;
+      atmosphere.dispose();
+      if (sound.master) sound.master.gain.value = 0;
+      if (sound.ctx) sound.ctx.close().catch(() => {});
+      if (composer) composer.dispose();
+      renderer.dispose();
+      resumeHomeMusic?.();
+      resumeHomeMusic = null;
+    }
     window.addEventListener('pagehide', event => {
       atmosphere.setPaused(true);
       if (sound.master) sound.master.gain.value = 0;
-      if (!event.persisted) {
-        disposed = true;
-        atmosphere.dispose();
-        if (sound.ctx) sound.ctx.close().catch(() => {});
-        if (composer) composer.dispose();
-        renderer.dispose();
-      }
+      if (!event.persisted) dispose();
     });
     window.addEventListener('pageshow', () => { if (!disposed) syncPause(); });
 
@@ -1587,8 +1594,8 @@ export function initGame() {
     document.getElementById('btn-start').disabled = false;
     document.getElementById('btn-start').textContent = 'Enter the dream';
     document.getElementById('loading-note').textContent = 'Headphones recommended';
-    // Read-only diagnostics used to check synchronized animation and audio.
-    window.killASpirit = { getState: () => ({
+    // The host disposes the dream when its frame is removed.
+    window.killASpirit = { dispose, getState: () => ({
       started: gameStarted, paused: isPaused(), elapsed, wind: windStrength,
       crow: scenery.getCrowState(), flock: scenery.getCrowFlockState(), audio: atmosphere.getState(),
       generation: state.generation, blasts: state.blastCount, spirit: state.status,

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import Projects from './Projects';
 import Socials from './Socials';
 import Diary from './Diary';
+import Game from './Game';
+import { getPage, useSiteNavigation } from './useSiteNavigation';
 import { useHomeAnimation } from './HomeAnimation';
 import { ShaderEffect } from './lib/custom-effect-runtime/index';
 import { setup, render, manifest } from './lib/custom-effects/CodeComponentId_91040247ba61849c1772a9a1caf10833c2700c71_8351';
@@ -161,17 +163,32 @@ function Dreams() {
   );
 }
 
-const isBiography = window.location.hostname === 'placeholder.biography.com'
-  || /^\/biography(?:\/|\.html)?$/.test(window.location.pathname);
-const isDreams = /^\/(?:dreams|games)(?:\/|\.html)?$/.test(window.location.pathname);
-const isProjects = /^\/projects(?:\/|\.html)?$/.test(window.location.pathname);
-const isSocials = /^\/socials(?:\/|\.html)?$/.test(window.location.pathname);
-const isDiary = /^\/diary(?:\/|\.html)?$/.test(window.location.pathname);
-const isGame = /^\/games\/kill-a-spirit\/?$/.test(window.location.pathname);
+const pageTitles = {
+  home: 'MESSTripping',
+  biography: 'Biography — MESSTripping',
+  projects: 'प्रोजैक्ट Projects — MESSTripping',
+  socials: 'सोशल Socials — MESSTripping',
+  diary: 'डायरी Diary — MESSTripping',
+  dreams: 'सपने Dreams — MESSTripping',
+  game: 'Kill a Spirit — सपने Dreams — MESSTripping',
+};
 
-if (isGame) {
-  window.location.replace('/games/kill-a-spirit/index.html');
-} else {
-  document.title = isDiary ? 'डायरी Diary — MESSTripping' : isSocials ? 'सोशल Socials — MESSTripping' : isProjects ? 'प्रोजैक्ट Projects — MESSTripping' : isDreams ? 'सपने Dreams — MESSTripping' : isBiography ? 'Biography — MESSTripping' : 'MESSTripping';
-  createRoot(document.getElementById('root')).render(isDiary ? <Diary navigation={<Navigation currentPage="Diary" />} /> : isSocials ? <Socials navigation={<Navigation currentPage="Socials" />} /> : isProjects ? <Projects navigation={<Navigation currentPage="Projects" />} /> : isDreams ? <Dreams /> : isBiography ? <Biography /> : <Home />);
+function App() {
+  const { pathname, onNavigate } = useSiteNavigation();
+  const page = getPage(pathname) || (window.location.hostname === 'placeholder.biography.com' ? 'biography' : 'home');
+
+  useEffect(() => {
+    document.title = pageTitles[page];
+    if (page !== 'home') window.siteMusic.load();
+  }, [page]);
+
+  if (page === 'diary') return <Diary navigation={<Navigation currentPage="Diary" />} />;
+  if (page === 'socials') return <Socials navigation={<Navigation currentPage="Socials" />} />;
+  if (page === 'projects') return <Projects navigation={<Navigation currentPage="Projects" />} />;
+  if (page === 'dreams') return <Dreams />;
+  if (page === 'biography') return <Biography />;
+  if (page === 'game') return <Game onNavigate={onNavigate} />;
+  return <Home />;
 }
+
+createRoot(document.getElementById('root')).render(<App />);

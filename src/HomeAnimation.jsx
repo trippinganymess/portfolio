@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createHomeAudioLoader } from './lib/home-animation/audio';
 import './home-animation.css';
 
 const messages = {
@@ -19,24 +20,44 @@ export function useHomeAnimation() {
   const launchSoundRef = useRef(null);
   const lightningSoundRef = useRef(null);
   const repairSoundRef = useRef(null);
-  const listeningSoundRef = useRef(null);
+  const sparkSoundRef = useRef(null);
   const dreamsRef = useRef(null);
   const controllerRef = useRef(null);
   const [state, setState] = useState('intact');
   const [ready, setReady] = useState(false);
+  const [flightReady, setFlightReady] = useState(false);
 
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let cancelled = false;
     let generation = 0;
+    let audioLoader = null;
 
     async function start() {
       const currentGeneration = ++generation;
       controllerRef.current?.dispose();
       controllerRef.current = null;
+      audioLoader?.dispose();
+      audioLoader = null;
       setReady(false);
+      setFlightReady(false);
       setState('intact');
-      if (motion.matches) return;
+      if (motion.matches) {
+        window.siteMusic.load();
+        return;
+      }
+
+      const currentAudioLoader = createHomeAudioLoader({
+        lightningSound: lightningSoundRef.current,
+        sparkSound: sparkSoundRef.current,
+        launchSound: launchSoundRef.current,
+        repairSound: repairSoundRef.current,
+        listeningMusic: window.siteMusic,
+        onFlightReady: () => {
+          if (!cancelled && currentGeneration === generation) setFlightReady(true);
+        },
+      });
+      audioLoader = currentAudioLoader;
 
       try {
         const { createHomeAnimation } = await import('./lib/home-animation/controller');
@@ -50,7 +71,9 @@ export function useHomeAnimation() {
           launchSound: launchSoundRef.current,
           lightningSound: lightningSoundRef.current,
           repairSound: repairSoundRef.current,
-          listeningSound: listeningSoundRef.current,
+          sparkSound: sparkSoundRef.current,
+          listeningMusic: window.siteMusic,
+          audioLoader: currentAudioLoader,
           dreamsLink: dreamsRef.current,
           onStateChange: setState,
           onUnavailable: () => {
@@ -60,10 +83,12 @@ export function useHomeAnimation() {
         });
         setReady(true);
       } catch {
+        currentAudioLoader.dispose();
         // Navigation remains available when WebGL cannot be initialized.
         if (!cancelled && currentGeneration === generation) {
           setReady(false);
           setState('intact');
+          window.siteMusic.load();
         }
       }
     }
@@ -76,6 +101,7 @@ export function useHomeAnimation() {
       motion.removeEventListener('change', start);
       controllerRef.current?.dispose();
       controllerRef.current = null;
+      audioLoader?.dispose();
     };
   }, []);
 
@@ -109,7 +135,7 @@ export function useHomeAnimation() {
             aria-label="Launch robot"
             aria-describedby="home-animation-status"
             hidden={!ready}
-            disabled={!ready || state !== 'broken'}
+            disabled={!ready || !flightReady || state !== 'broken'}
             onClick={() => controllerRef.current?.launch()}
           >
             <span className="launch-indicator" aria-hidden="true" />
@@ -119,11 +145,11 @@ export function useHomeAnimation() {
             </svg>
           </button>
         </div>
-        <audio ref={lightningSoundRef} src="/audio/lightning-strike.mp3" preload="auto" aria-hidden="true" />
-        <audio ref={launchSoundRef} src="/audio/robot-launch.mp3" preload="auto" aria-hidden="true" />
-        <audio ref={repairSoundRef} src="/audio/robot-repair.mp3" preload="auto" loop aria-hidden="true" />
-        <audio ref={listeningSoundRef} src="/audio/robot-listening.mp3" preload="metadata" loop aria-hidden="true" />
-        <p id="home-animation-status" className="home-animation-status" role="status">{messages[state]}</p>
+        <audio ref={lightningSoundRef} data-source="/audio/lightning-strike.mp3" preload="none" aria-hidden="true" />
+        <audio ref={launchSoundRef} data-source="/audio/robot-launch.mp3" preload="none" aria-hidden="true" />
+        <audio ref={repairSoundRef} data-source="/audio/robot-repair.mp3" preload="none" loop aria-hidden="true" />
+        <audio ref={sparkSoundRef} data-source="/audio/broken-button-spark.mp3" preload="none" aria-hidden="true" />
+        <p id="home-animation-status" className="home-animation-status" role="status">{state === 'broken' && !flightReady ? 'Lightning broke Dreams. The robot is getting ready to launch.' : messages[state]}</p>
       </div>
     ),
   };
