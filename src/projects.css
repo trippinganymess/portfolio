@@ -8,12 +8,12 @@
 .project-preview { background: #242036; }
 
 @media (min-width: 641px) and (max-width: 900px) {
-  .projects-page .games-heading h1 { font-size: clamp(52px, 8.5vw, 76px); }
+  .projects-page .games-heading h1 { font-size: calc(clamp(52px, 8.5vw, 76px) * var(--text-scale)); }
   .projects-page .games-count { margin-left: 10px; }
 }
 
 @media (max-width: 640px) {
-  .projects-page .games-heading h1 { font-size: clamp(42px, 13vw, 74px); }
+  .projects-page .games-heading h1 { font-size: calc(clamp(42px, 13vw, 74px) * var(--text-scale)); }
   .project-card + .project-card { margin-top: 64px; }
   .project-preview img { object-position: center; }
   .project-card .game-card-notes { gap: 10px 20px; }

@@ -1,3 +1,5 @@
+import { createCrowModel, poseCrowWings } from '../../lib/crow-model.js';
+
 /* A living woodblock-print landscape. All textures are painted locally. */
 window.createDreamScenery = function createDreamScenery(THREE, scene, { onCrowFlightChange } = {}) {
   const group = new THREE.Group();
@@ -456,36 +458,7 @@ window.createDreamScenery = function createDreamScenery(THREE, scene, { onCrowFl
 
   // Crow clones share every geometry and material. Twenty branch slots plus
   // four spare models allow new arrivals while older birds visibly fly away.
-  const crowTemplate = new THREE.Group();
-  const featherMaterial = flatMaterial(0x141b2c, { side: THREE.DoubleSide });
-  const sheenMaterial = flatMaterial(0x28304a, { side: THREE.DoubleSide });
-  function ellipsoid(parent, radius, x, y, z, sx, sy, sz, material) {
-    const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 12, 8), material);
-    mesh.position.set(x, y, z);
-    mesh.scale.set(sx, sy, sz);
-    parent.add(mesh);
-    return mesh;
-  }
-  ellipsoid(crowTemplate, .31, 0, .17, 0, 1.2, .73, .68, featherMaterial);
-  ellipsoid(crowTemplate, .21, -.31, .37, .04, 1, 1, .83, featherMaterial);
-  const beak = shapeMesh([[-.45,.43],[-.75,.32],[-.43,.28]], featherMaterial, crowTemplate);
-  beak.position.z = .05;
-  shapeMesh([[.15,.19],[.7,-.03],[.66,-.18],[.17,-.05]], featherMaterial, crowTemplate);
-  ellipsoid(crowTemplate, .025, -.375, .425, .206, 1, 1, 1, flatMaterial(0xd5bac7)).name = 'crow-eye';
-  [1, -1].forEach((direction) => {
-    const pivot = new THREE.Group();
-    pivot.name = `crow-wing-${direction}`;
-    pivot.position.set(.05, .2, direction * .1);
-    const wing = shapeMesh([[0,0],[.03,.43],[.35,1.02],[.8,1.32],[.75,.97],[.61,.69],[.57,.41],[.35,.11]], direction > 0 ? featherMaterial : sheenMaterial, pivot);
-    wing.position.z = direction * .06;
-    if (direction < 0) pivot.scale.x = -.82;
-    crowTemplate.add(pivot);
-  });
-  const legs = new THREE.Group();
-  legs.name = 'crow-legs';
-  branch(legs, [[-.14,.04,.06],[-.16,-.18,.08],[-.3,-.2,.08]], .018);
-  branch(legs, [[.09,.03,.13],[.12,-.18,.14],[-.01,-.2,.14]], .018);
-  crowTemplate.add(legs);
+  const crowTemplate = createCrowModel(THREE);
   const crowPool = [];
   const crowScale = .78;
   const crowPoolLimit = 24;
@@ -605,12 +578,7 @@ window.createDreamScenery = function createDreamScenery(THREE, scene, { onCrowFl
     }
   }
   function setWingPose(bird, elapsed, fold) {
-    const flap = Math.sin(elapsed * bird.flapSpeed + bird.phase);
-    bird.wings.forEach(({ pivot, direction }) => {
-      pivot.rotation.x = THREE.MathUtils.lerp(direction * flap * .82, direction * 1.42, fold);
-      pivot.rotation.z = THREE.MathUtils.lerp(direction * flap * .7, direction * -1, fold);
-      pivot.scale.y = 1 - fold * .53;
-    });
+    poseCrowWings(THREE, bird.wings, elapsed, bird.flapSpeed, bird.phase, fold);
   }
   function holdingDestination(bird) {
     bird.destination.set(2.2, 8.1, 3.3);

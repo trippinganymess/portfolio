@@ -5,8 +5,10 @@ import ArrowIcon from './ArrowIcon';
 import Projects from './Projects';
 import Socials from './Socials';
 import Game from './Game';
+import Fireflies from './Fireflies';
 import { getPage, useSiteNavigation } from './useSiteNavigation';
 import { useHomeAnimation } from './HomeAnimation';
+import { useDreamsSpark } from './DreamsSpark';
 import { ShaderEffect } from './lib/custom-effect-runtime/index';
 import { setup, render, manifest } from './lib/custom-effects/CodeComponentId_91040247ba61849c1772a9a1caf10833c2700c71_8351';
 import './styles.css';
@@ -34,7 +36,8 @@ const links = [
   { hindi: 'सपने', english: 'Dreams', href: '/dreams' },
 ];
 
-function Navigation({ currentPage, dreamsLinkProps }) {
+function Navigation({ currentPage }) {
+  const { linkRef, spark } = useDreamsSpark(currentPage !== 'Dreams');
   return (
     <nav className="navigation" aria-label="Portfolio">
       <ul role="list">
@@ -45,10 +48,11 @@ function Navigation({ currentPage, dreamsLinkProps }) {
               aria-current={currentPage === english ? 'page' : undefined}
               data-node-id={node}
               data-figma-href={source || href}
-              {...(english === 'Dreams' ? dreamsLinkProps : {})}
+              {...(english === 'Dreams' ? { ref: linkRef, className: 'dreams-link' } : {})}
             >
               <span lang="hi">{hindi}</span>
               <span className="navigation-english">{english}</span>
+              {english === 'Dreams' && spark}
             </a>
           </li>
         ))}
@@ -58,9 +62,9 @@ function Navigation({ currentPage, dreamsLinkProps }) {
 }
 
 function Home() {
-  const { dreamsLinkProps, animation } = useHomeAnimation();
+  const { animation } = useHomeAnimation();
   return (
-    <PageLayout className="home" titleId="home-title" navigation={<Navigation dreamsLinkProps={dreamsLinkProps} />} data-figma-page="placeholder.home.com">
+    <PageLayout className="home" titleId="home-title" navigation={<Navigation />} data-figma-page="placeholder.home.com">
       <h1 id="home-title" className="visually-hidden">MESSTripping</h1>
       {animation}
       <div className="wordmark" aria-hidden="true" data-node-id="1:61">
@@ -147,12 +151,20 @@ function App() {
     document.title = pageTitles[page];
   }, [page]);
 
-  if (page === 'socials') return <Socials navigation={<Navigation currentPage="Socials" />} />;
-  if (page === 'projects') return <Projects navigation={<Navigation currentPage="Projects" />} />;
-  if (page === 'dreams') return <Dreams />;
-  if (page === 'biography') return <Biography />;
-  if (page === 'game') return <Game onNavigate={onNavigate} />;
-  return <Home />;
+  let content;
+  if (page === 'socials') content = <Socials navigation={<Navigation currentPage="Socials" />} />;
+  else if (page === 'projects') content = <Projects navigation={<Navigation currentPage="Projects" />} />;
+  else if (page === 'dreams') content = <Dreams />;
+  else if (page === 'biography') content = <Biography />;
+  else if (page === 'game') content = <Game onNavigate={onNavigate} />;
+  else content = <Home />;
+
+  return (
+    <>
+      <Fireflies enabled={page !== 'game'} />
+      {content}
+    </>
+  );
 }
 
 createRoot(document.getElementById('root')).render(<App />);

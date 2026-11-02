@@ -11,26 +11,26 @@
 .blog-page a { color: inherit; }
 .blog-page [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
 .blog-heading { width: 100%; padding-top: 92px; }
-.blog-heading > p { font-size: 25px; line-height: 33px; }
-.blog-heading h1 { margin-top: 10px; font-size: 104px; line-height: 1.1; font-weight: 300; letter-spacing: -5px; }
+.blog-heading > p { font-size: calc(25px * var(--text-scale)); line-height: calc(33px * var(--text-scale)); }
+.blog-heading h1 { margin-top: 10px; font-size: calc(104px * var(--text-scale)); line-height: 1.1; font-weight: 300; letter-spacing: -5px; }
 .blog-coming-soon { margin-top: 100px; padding: 32px 0 12px; border-top: 1px solid rgb(255 255 255 / 25%); }
-.blog-note { font-size: 13px; line-height: 1.6; color: var(--biography-secondary); }
-.blog-coming-soon h2 { margin: 28px 0 20px; max-width: 840px; font-size: clamp(32px, 5vw, 66px); line-height: 1.15; font-weight: 300; letter-spacing: -2px; }
+.blog-note { font-size: calc(13px * var(--text-scale)); line-height: 1.6; color: var(--biography-secondary); }
+.blog-coming-soon h2 { margin: 28px 0 20px; max-width: 840px; font-size: calc(clamp(32px, 5vw, 66px) * var(--text-scale)); line-height: 1.15; font-weight: 300; letter-spacing: -2px; }
 .blog-coming-soon h2 span { opacity: 0.5; }
-.blog-description { font-size: 17px; line-height: 1.7; color: var(--biography-secondary); }
+.blog-description { font-size: calc(17px * var(--text-scale)); line-height: 1.7; color: var(--biography-secondary); }
 .blog-page .brand-signature { padding-top: 120px; }
 
 @media (max-width: 1100px) {
   .blog-page { padding: 40px; }
-  .blog-heading h1 { font-size: 80px; letter-spacing: -3px; }
+  .blog-heading h1 { font-size: calc(80px * var(--text-scale)); letter-spacing: -3px; }
 }
 
 @media (max-width: 640px) {
   .blog-page { padding: 24px; }
   .blog-heading { padding-top: 64px; }
-  .blog-heading h1 { font-size: clamp(56px, 16vw, 80px); }
+  .blog-heading h1 { font-size: calc(clamp(56px, 16vw, 80px) * var(--text-scale)); }
   .blog-coming-soon { margin-top: 48px; padding-top: 24px; }
-  .blog-coming-soon h2 { max-width: 320px; margin-top: 24px; font-size: clamp(32px, 9vw, 48px); letter-spacing: -1px; }
-  .blog-description { max-width: 320px; font-size: 15px; }
+  .blog-coming-soon h2 { max-width: 320px; margin-top: 24px; font-size: calc(clamp(32px, 9vw, 48px) * var(--text-scale)); letter-spacing: -1px; }
+  .blog-description { max-width: 320px; font-size: calc(15px * var(--text-scale)); }
   .blog-page .brand-signature { padding-top: 88px; }
 }
