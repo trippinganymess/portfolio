@@ -59,7 +59,7 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
   let disposed = false;
   let lastFrame = null;
   let elapsed = 0;
-  let sparkRemaining = 0;
+  let sparkRemaining = 0.4;
   let noteRemaining = 0.65;
   let shadowRemaining = 0;
 
@@ -124,8 +124,8 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     }
     sparkRemaining -= delta;
     if (sparkRemaining <= 0) {
-      effects.sparks(linkPosition(0.25 + Math.random() * 0.5, 0.3 + Math.random() * 0.4), 3, 0xd7e7ff, 65);
-      sparkRemaining = 0.06;
+      effects.shortCircuit(linkPosition(0.25, 0.45), 0.7 + Math.random() * 0.5);
+      sparkRemaining = 0.5 + Math.random() * 1.1;
     }
     effects.update(delta, elapsed);
     shadowRemaining -= delta;

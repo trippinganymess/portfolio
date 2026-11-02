@@ -27,6 +27,49 @@ function noteTexture(symbol) {
   return new THREE.CanvasTexture(canvas);
 }
 
+function jaggedPath(start, end, segments, sway) {
+  const direction = new THREE.Vector3().subVectors(end, start);
+  const normal = new THREE.Vector3(-direction.y, direction.x, 0).normalize();
+  const points = [];
+  let displacement = 0;
+  for (let index = 0; index <= segments; index++) {
+    const progress = index / segments;
+    const point = new THREE.Vector3().lerpVectors(start, end, progress);
+    if (index > 0 && index < segments) {
+      displacement = displacement * 0.65 + (Math.random() - 0.5) * sway;
+      point.addScaledVector(normal, displacement * Math.sin(progress * Math.PI));
+    }
+    points.push(point);
+  }
+  return points;
+}
+
+// Screen-facing ribbons retain the hard, irregular bends of an electric arc.
+function arcRibbon(points, width) {
+  const vertices = [];
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const length = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    const taper = 1 - i / points.length * 0.65;
+    const nx = -(b.y - a.y) / length * width * taper;
+    const ny = (b.x - a.x) / length * width * taper;
+    vertices.push(a.x - nx, a.y - ny, a.z, b.x - nx, b.y - ny, b.z, a.x + nx, a.y + ny, a.z);
+    vertices.push(a.x + nx, a.y + ny, a.z, b.x - nx, b.y - ny, b.z, b.x + nx, b.y + ny, b.z);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  return geometry;
+}
+
+function buildArc(group, points, width = 1) {
+  for (const [radius, color, opacity] of [[8, 0x749cff, 0.055], [3, 0x9ccfff, 0.18], [0.85, 0xc9e6ff, 0.8], [0.3, 0xffffff, 1]]) {
+    const material = new THREE.MeshBasicMaterial({ color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
+    material.userData.peakOpacity = opacity;
+    group.add(new THREE.Mesh(arcRibbon(points, radius * width), material));
+  }
+}
+
 function disposeObjects(root) {
   const geometries = new Set();
   const materials = new Set();
@@ -45,7 +88,8 @@ function disposeObjects(root) {
 export function createEffects(scene) {
   const root = new THREE.Group();
   const particleGroup = new THREE.Group();
-  root.add(particleGroup);
+  const arcGroup = new THREE.Group();
+  root.add(particleGroup, arcGroup);
   scene.add(root);
 
   const sparkTexture = radialTexture([
@@ -57,6 +101,7 @@ export function createEffects(scene) {
   const noteTextures = [noteTexture('♪'), noteTexture('♫')];
   const textures = [sparkTexture, ...noteTextures];
   const notes = [];
+  const arcs = [];
   const hotSparks = [];
   const sparkLimit = 320;
   const trailPositions = new THREE.Float32BufferAttribute(new Float32Array(sparkLimit * 6), 3).setUsage(THREE.DynamicDrawUsage);
@@ -97,6 +142,26 @@ export function createEffects(scene) {
     }
   }
 
+  function shortCircuit(origin, strength = 1) {
+    if (disposed) return;
+    const discharge = new THREE.Group();
+    const start = origin.clone();
+    start.z = Math.max(106, start.z);
+    for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = (14 + Math.random() * 27) * strength;
+      const end = start.clone().add(new THREE.Vector3(Math.cos(angle) * distance, Math.sin(angle) * distance, 0));
+      const points = jaggedPath(start, end, 10, 12 * strength);
+      buildArc(discharge, points, 0.65);
+      const branchStart = points[4];
+      const branchEnd = branchStart.clone().add(new THREE.Vector3(Math.cos(angle + 0.8) * distance * 0.45, Math.sin(angle + 0.8) * distance * 0.45, 0));
+      buildArc(discharge, jaggedPath(branchStart, branchEnd, 5, 7), 0.28);
+    }
+    arcGroup.add(discharge);
+    arcs.push({ group: discharge, age: 0, lifetime: 0.09 + Math.random() * 0.09 });
+    sparks(start, Math.round(7 * strength), 0xd7e7ff, 130 * strength);
+  }
+
   function musicNote(origin, scale = 1) {
     if (disposed) return;
     const material = new THREE.SpriteMaterial({ map: noteTextures[Math.random() > 0.5 ? 0 : 1], transparent: true, opacity: 0.5 });
@@ -121,6 +186,18 @@ export function createEffects(scene) {
   function update(delta, elapsed) {
     if (disposed) return;
     const step = Math.min(Math.max(delta, 0), 0.1);
+    for (let i = arcs.length - 1; i >= 0; i--) {
+      const arc = arcs[i];
+      arc.age += step;
+      if (arc.age >= arc.lifetime) {
+        disposeObjects(arc.group);
+        arcs.splice(i, 1);
+      } else {
+        const flicker = arc.age > 0.035 && arc.age < 0.055 ? 0.12 : 1;
+        const fade = (1 - arc.age / arc.lifetime) * flicker;
+        arc.group.children.forEach(({ material }) => { material.opacity = material.userData.peakOpacity * fade; });
+      }
+    }
     for (let i = hotSparks.length - 1; i >= 0; i--) {
       const spark = hotSparks[i];
       spark.age += step;
@@ -159,6 +236,8 @@ export function createEffects(scene) {
 
   function clear() {
     clearGroup(particleGroup);
+    clearGroup(arcGroup);
+    arcs.length = 0;
     hotSparks.length = 0;
     trailGeometry.setDrawRange(0, 0);
     tipGeometry.setDrawRange(0, 0);
@@ -175,5 +254,5 @@ export function createEffects(scene) {
     disposed = true;
   }
 
-  return { update, sparks, musicNote, dispose };
+  return { update, shortCircuit, musicNote, dispose };
 }

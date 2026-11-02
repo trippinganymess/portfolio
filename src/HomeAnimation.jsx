@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createSparkAudio } from './lib/home-animation/audio';
 import './home-animation.css';
 
 export function useHomeAnimation() {
@@ -7,7 +6,6 @@ export function useHomeAnimation() {
   const canvasRef = useRef(null);
   const robotRef = useRef(null);
   const stationRef = useRef(null);
-  const sparkSoundRef = useRef(null);
   const dreamsRef = useRef(null);
   const controllerRef = useRef(null);
   const [ready, setReady] = useState(false);
@@ -16,14 +14,11 @@ export function useHomeAnimation() {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let cancelled = false;
     let generation = 0;
-    let sparkAudio = null;
 
     async function start() {
       const currentGeneration = ++generation;
       controllerRef.current?.dispose();
       controllerRef.current = null;
-      sparkAudio?.dispose();
-      sparkAudio = null;
       setReady(false);
       if (motion.matches) return;
 
@@ -38,18 +33,14 @@ export function useHomeAnimation() {
           dreamsLink: dreamsRef.current,
           onUnavailable: () => {
             setReady(false);
-            sparkAudio?.dispose();
           },
         });
-        sparkAudio = createSparkAudio(sparkSoundRef.current);
         setReady(true);
       } catch {
         // Dreams remains a normal link if the decorative scene cannot load.
         if (!cancelled && currentGeneration === generation) {
           controllerRef.current?.dispose();
           controllerRef.current = null;
-          sparkAudio?.dispose();
-          sparkAudio = null;
           setReady(false);
         }
       }
@@ -63,7 +54,6 @@ export function useHomeAnimation() {
       motion.removeEventListener('change', start);
       controllerRef.current?.dispose();
       controllerRef.current = null;
-      sparkAudio?.dispose();
     };
   }, []);
 
@@ -74,7 +64,6 @@ export function useHomeAnimation() {
         <canvas ref={canvasRef} className="home-animation-canvas" />
         <div ref={robotRef} className="home-animation-robot" />
         <div ref={stationRef} className="home-animation-station" />
-        <audio ref={sparkSoundRef} data-source="/audio/broken-button-spark.mp3" preload="none" loop />
       </div>
     ),
   };
