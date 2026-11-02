@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import PageLayout from './PageLayout';
+import ArrowIcon from './ArrowIcon';
 import Projects from './Projects';
 import Socials from './Socials';
 import Diary from './Diary';
@@ -111,7 +112,7 @@ function Dreams() {
         <a className="game-preview" href="/games/kill-a-spirit/index.html" aria-label="Play Kill a Spirit">
           <img src="/games/kill-a-spirit/poster.svg" alt="A glowing chalk spirit above a Japanese lake, with rose-colored mountains, a twilight sun, and cherry blossom trees." width="1440" height="760" />
           <span className="game-preview-caption">A little strange. A little serene.</span>
-          <span className="game-preview-play" aria-hidden="true">↗</span>
+          <span className="game-preview-play" aria-hidden="true"><ArrowIcon /></span>
         </a>
 
         <div className="game-card-details">
@@ -122,7 +123,7 @@ function Dreams() {
               <p>Chase a glow through a Japanese twilight dream. Each touch fades it further into the twilight.</p>
             </div>
           </div>
-          <a className="game-launch" href="/games/kill-a-spirit/index.html" aria-label="Enter the dream: Kill a Spirit">Enter the dream <span aria-hidden="true">↗</span></a>
+          <a className="game-launch" href="/games/kill-a-spirit/index.html" aria-label="Enter the dream: Kill a Spirit">Enter the dream <ArrowIcon /></a>
         </div>
         <footer className="game-card-notes">
           <span>3D · Pointer & touch</span>

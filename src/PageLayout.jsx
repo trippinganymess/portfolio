@@ -1,5 +1,6 @@
 import React from 'react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import ArrowIcon from './ArrowIcon';
 
 export default function PageLayout({ className, navigation, titleId, pageName, children, ...attributes }) {
   return (
@@ -8,7 +9,7 @@ export default function PageLayout({ className, navigation, titleId, pageName, c
       <header className="site-header">
         {pageName && (
           <a className="return-home" href="/">
-            <span className="back-arrow" aria-hidden="true">←</span>
+            <ArrowIcon direction="left" className="back-arrow" />
             <span>Home</span>
           </a>
         )}
