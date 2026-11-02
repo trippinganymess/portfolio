@@ -1,55 +1,49 @@
-export function createHomeAudioLoader({ lightningSound, sparkSound, launchSound, repairSound, onFlightReady }) {
+export function createSparkAudio(sound) {
   const abortController = new AbortController();
-  const loaded = new Set();
-  let strikeLoaded = false;
-  let flightLoaded = false;
+  let resource = null;
   let disposed = false;
+  let loaded = false;
 
-  async function load(sound, source) {
-    const resource = await window.loadCompleteAudio(sound, source, abortController.signal);
-    if (disposed) {
-      resource.dispose();
-      return;
-    }
-    loaded.add(resource);
+  sound.loop = true;
+  sound.volume = 0.3;
+
+  function play() {
+    if (disposed || !loaded || document.hidden || !sound.paused) return;
+    // Gestures retry playback when the browser blocks background audio.
+    sound.play()?.catch(() => {});
   }
 
-  // These two full downloads and decoder checks must finish before stage two.
-  Promise.all([
-    load(lightningSound, '/audio/lightning-strike.mp3'),
-    load(sparkSound, '/audio/broken-button-spark.mp3'),
-  ]).then(() => {
-    if (disposed) return;
-    strikeLoaded = true;
-
-    Promise.all([
-      load(launchSound, '/audio/robot-launch.mp3'),
-      load(repairSound, '/audio/robot-repair.mp3'),
-    ]).then(() => {
-      if (disposed) return;
-      flightLoaded = true;
-      onFlightReady();
-    }).catch(() => { /* Launch stays disabled if a robot cue cannot load. */ });
-  }).catch(() => {
-    // A failed strike cue leaves Dreams intact and navigation available.
-    dispose();
-  });
-
-  function dispose() {
-    if (disposed) return;
-    disposed = true;
-    abortController.abort();
-    loaded.forEach(resource => resource.dispose());
-    loaded.clear();
+  function visibilityChanged() {
+    if (document.hidden) sound.pause();
+    else play();
   }
 
-  function ready(sounds) {
-    return !disposed && sounds.every(sound => sound.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA);
-  }
+  document.addEventListener('pointerdown', play, true);
+  document.addEventListener('keydown', play, true);
+  document.addEventListener('visibilitychange', visibilityChanged);
+
+  window.loadCompleteAudio(sound, '/audio/broken-button-spark.mp3', abortController.signal)
+    .then(loadedResource => {
+      if (disposed) {
+        loadedResource.dispose();
+        return;
+      }
+      resource = loadedResource;
+      loaded = true;
+      play();
+    })
+    .catch(() => { /* Visual sparks and navigation remain available without audio. */ });
 
   return {
-    canStrike: () => strikeLoaded && ready([lightningSound, sparkSound]),
-    canLaunch: () => flightLoaded && !disposed,
-    dispose,
+    dispose() {
+      if (disposed) return;
+      disposed = true;
+      document.removeEventListener('pointerdown', play, true);
+      document.removeEventListener('keydown', play, true);
+      document.removeEventListener('visibilitychange', visibilityChanged);
+      abortController.abort();
+      sound.pause();
+      resource?.dispose();
+    },
   };
 }
