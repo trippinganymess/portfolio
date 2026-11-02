@@ -5,7 +5,7 @@ import { createSketchRobot, ROBOT_HEIGHT } from './robot';
 import { createLandingStation } from './station';
 import { createEffects } from './effects';
 
-export function createHomeAnimation({ stage, canvas, flash, robotAnchor, stationElement, launchSound, lightningSound, repairSound, listeningSound, dreamsLink, onStateChange, onUnavailable }) {
+export function createHomeAnimation({ stage, canvas, flash, robotAnchor, stationElement, launchSound, lightningSound, repairSound, sparkSound, listeningMusic, audioLoader, dreamsLink, onStateChange, onUnavailable }) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -81,7 +81,8 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
   let discharge = 0;
   let shadowRemaining = 0;
   let welding = false;
-  const sounds = [lightningSound, launchSound, repairSound, listeningSound];
+  let resumeListeningMusic = null;
+  const sounds = [lightningSound, launchSound, repairSound, sparkSound];
   const activeSounds = new Set();
   const resumeSounds = new Set();
   const primedSounds = new Set();
@@ -104,7 +105,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
   function playSound(sound, volume) {
     if (disposed) return;
     resumeSounds.delete(sound);
-    sound.currentTime = 0;
+    if (sound.currentTime !== 0) sound.currentTime = 0;
     sound.muted = false;
     sound.volume = volume;
     activeSounds.add(sound);
@@ -121,16 +122,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
 
   function stopSound(sound) {
     pauseSound(sound);
-    if (sound.readyState > 0) sound.currentTime = 0;
-  }
-
-  function playListeningMusic() {
-    if (disposed || document.hidden || !rig.isBobbing || activeSounds.has(listeningSound)) return;
-    resumeSounds.delete(listeningSound);
-    listeningSound.muted = false;
-    listeningSound.volume = 0.08;
-    activeSounds.add(listeningSound);
-    playCurrentSound(listeningSound);
+    if (sound.readyState > 0 && sound.currentTime !== 0) sound.currentTime = 0;
   }
 
   function primeSounds() {
@@ -138,8 +130,8 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     // Unlock the same media elements during a gesture for later timed cues.
     // Priming is muted, so the fan is only audible while the torch is working.
     for (const sound of sounds) {
+      if (sound.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) continue;
       if (activeSounds.has(sound) || primedSounds.has(sound)) continue;
-      if (sound === listeningSound && rig.isBobbing) continue;
       const version = nextSoundVersion(sound);
       const position = sound.currentTime;
       primedSounds.add(sound);
@@ -147,7 +139,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
       sound.play()?.then(() => {
         if (disposed || soundVersions.get(sound) !== version) return;
         sound.pause();
-        sound.currentTime = position;
+        if (sound.currentTime !== position) sound.currentTime = position;
         sound.muted = false;
       }).catch(() => {
         if (disposed || soundVersions.get(sound) !== version) return;
@@ -155,12 +147,16 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
         sound.muted = false;
       });
     }
-    playListeningMusic();
   }
 
   function setState(next) {
     state = next;
     onStateChange(next);
+  }
+
+  function resumeMusic() {
+    resumeListeningMusic?.();
+    resumeListeningMusic = null;
   }
 
   function cancelTimeline() {
@@ -170,6 +166,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     weldLight.intensity = 0;
     stopSound(launchSound);
     stopSound(repairSound);
+    stopSound(sparkSound);
   }
 
   function newTimeline() {
@@ -246,14 +243,17 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
   }
 
   function strike() {
+    // Never create lightning until BOTH complete strike files are available.
+    if (disposed || !audioLoader.canStrike()) return;
     strikeRemaining = null;
-    pauseSound(listeningSound);
+    resumeListeningMusic = listeningMusic.suspend();
     effects.createStrike(origin, linkPosition(0.3, 0.5, impact));
     rig.isBobbing = false;
     setState('broken');
     const reaction = newTimeline();
     // The source's silent lead-in is trimmed to the thunder around 9 seconds.
     playSound(lightningSound, 0.6);
+    playSound(sparkSound, 0.3);
     reaction.fromTo(motion, { flash: 0.85 }, { flash: 0, duration: 0.32, ease: 'power3.out' }, 0);
     reaction.to(rig.upperBodyGroup.rotation, { z: -0.035, duration: 0.45, ease: 'back.out(1.4)' }, 0);
     reaction.to(rig.headGroup.rotation, { ...lookAtBrokenButton(), duration: 0.65, ease: 'power2.inOut' }, 0.05);
@@ -261,7 +261,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
   }
 
   function launch() {
-    if (disposed || state !== 'broken') return;
+    if (disposed || state !== 'broken' || !audioLoader.canLaunch()) return;
     const repairTimeline = newTimeline();
     motion.flash = 0;
     setState('launching');
@@ -289,6 +289,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     repairTimeline.to(launchSound, { volume: 0, duration: 0.3, ease: 'power1.out' }, 'liftOff+=1.4');
     repairTimeline.call(() => {
       stopSound(launchSound);
+      stopSound(sparkSound);
       playSound(repairSound, 0.3);
       welding = true;
       weldRemaining = 0;
@@ -297,6 +298,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     repairTimeline.to(repairSound, { volume: 0, duration: 0.16 }, '-=0.16');
     repairTimeline.call(() => {
       stopSound(repairSound);
+      stopSound(sparkSound);
       welding = false;
       weldLight.intensity = 0;
       rig.weldTorchGroup.visible = false;
@@ -321,13 +323,14 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
       rig.musicPlayerGroup.visible = true;
       rig.headphoneWireMesh.visible = true;
       rig.isBobbing = true;
-      playListeningMusic();
+      resumeMusic();
     });
   }
 
   function hint() {
     if (disposed || state !== 'broken') return;
     effects.shortCircuit(linkPosition(0.3, 0.5, impact), 1.25);
+    playSound(sparkSound, 0.3);
     discharge = 4.5;
   }
 
@@ -336,7 +339,8 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     const delta = lastFrame === null ? 0 : Math.min((now - lastFrame) / 1000, 0.05);
     lastFrame = now;
     elapsed += delta;
-    if (strikeRemaining !== null) {
+    // Only the completed thunder and spark downloads unlock this countdown.
+    if (strikeRemaining !== null && audioLoader.canStrike()) {
       strikeRemaining -= delta;
       if (strikeRemaining <= 0) strike();
     }
@@ -381,6 +385,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
       shortRemaining -= delta;
       if (shortRemaining <= 0) {
         effects.shortCircuit(linkPosition(0.25, 0.45, impact), 0.7 + Math.random() * 0.5);
+        playSound(sparkSound, 0.3);
         discharge = 3 + Math.random() * 2;
         shortRemaining = 0.5 + Math.random() * 1.1;
       }
@@ -418,7 +423,6 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
         if (activeSounds.has(sound)) playCurrentSound(sound);
       }
       resumeSounds.clear();
-      playListeningMusic();
       frame = requestAnimationFrame(animate);
     }
   }
@@ -446,6 +450,7 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     cancelAnimationFrame(frame);
     cancelTimeline();
     sounds.forEach(stopSound);
+    resumeMusic();
     resizeObserver?.disconnect();
     window.removeEventListener('resize', resize);
     document.removeEventListener('visibilitychange', visibilityChanged);
@@ -475,7 +480,6 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     canvas.addEventListener('webglcontextlost', contextLost);
     resize();
     if (!document.hidden) {
-      playListeningMusic();
       frame = requestAnimationFrame(animate);
     }
   } catch (error) {
