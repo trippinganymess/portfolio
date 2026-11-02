@@ -200,25 +200,17 @@ main[tabindex="-1"]:focus { outline: none; }
 
 .biography-copy { display: flex; align-items: flex-start; gap: 40px; }
 
-.copy-guidance {
-  display: flex;
-  flex: 0 0 176px;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 7px;
-  font-size: 13px;
-  line-height: 20px;
-}
-
-.copy-guidance p:first-child { font-weight: 400; }
-.copy-guidance p:last-child { color: var(--biography-secondary); }
+.biography-portrait { flex: 0 0 300px; width: min(300px, 100%); margin: 0; }
+.biography-portrait img { display: block; width: 100%; height: auto; }
 
 .personal-introduction {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: 660px;
-  max-width: calc(100% - 216px);
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 660px;
   font-size: 25px;
   line-height: 39px;
 }
@@ -277,7 +269,7 @@ main[tabindex="-1"]:focus { outline: none; }
   .biography { padding: 40px; }
   .biography-heading h1 { font-size: 80px; letter-spacing: -3px; }
   .biography-copy { flex-direction: column; gap: 24px; }
-  .copy-guidance { flex-basis: auto; width: 176px; }
+  .biography-portrait { flex-basis: auto; }
   .personal-introduction { max-width: 100%; }
   .brand-signature { padding-top: 160px; }
   .games-page { padding: 40px; }

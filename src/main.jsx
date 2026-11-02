@@ -4,13 +4,14 @@ import PageLayout from './PageLayout';
 import ArrowIcon from './ArrowIcon';
 import Projects from './Projects';
 import Socials from './Socials';
-import Diary from './Diary';
 import Game from './Game';
 import { getPage, useSiteNavigation } from './useSiteNavigation';
 import { useHomeAnimation } from './HomeAnimation';
 import { ShaderEffect } from './lib/custom-effect-runtime/index';
 import { setup, render, manifest } from './lib/custom-effects/CodeComponentId_91040247ba61849c1772a9a1caf10833c2700c71_8351';
 import './styles.css';
+
+const Blog = import.meta.env.DEV ? (await import('./Blog')).default : null;
 
 const shaders = [{
   setup,
@@ -29,10 +30,10 @@ const shaders = [{
 }];
 
 const links = [
-  { hindi: 'आत्मकथा', english: 'Biography', href: '/biography', source: 'https://placeholder.biography.com', node: '1:4' },
+  { hindi: 'मेरे बारे में', english: 'About Me', href: '/biography', source: 'https://placeholder.biography.com', node: '1:4' },
   { hindi: 'प्रोजैक्ट', english: 'Projects', href: '/projects', node: '1:65' },
   { hindi: 'सोशल', english: 'Socials', href: '/socials', node: '1:65' },
-  { hindi: 'डायरी', english: 'Diary', href: '/diary', node: '1:65' },
+  ...(import.meta.env.DEV ? [{ hindi: 'ब्लॉग', english: 'Blog', href: '/blog', node: '1:65' }] : []),
   { hindi: 'सपने', english: 'Dreams', href: '/dreams' },
 ];
 
@@ -76,17 +77,16 @@ function Home() {
 
 function Biography() {
   return (
-    <PageLayout className="biography" titleId="biography-title" pageName="Biography" navigation={<Navigation currentPage="Biography" />} data-figma-page="placeholder.biography.com" data-node-id="12:3">
+    <PageLayout className="biography" titleId="biography-title" pageName="About Me" navigation={<Navigation currentPage="About Me" />} data-figma-page="placeholder.biography.com" data-node-id="12:3">
       <section className="biography-introduction" aria-labelledby="biography-title" data-node-id="12:30">
         <header className="biography-heading" data-node-id="12:31">
-          <p lang="hi" data-node-id="12:32">आत्मकथा</p>
-          <h1 id="biography-title" data-node-id="12:33">Biography</h1>
+          <p lang="hi" data-node-id="12:32">मेरे बारे में</p>
+          <h1 id="biography-title" data-node-id="12:33">About Me</h1>
         </header>
         <div className="biography-copy" data-node-id="12:34">
-          <div className="copy-guidance" data-node-id="12:35">
-            <p data-node-id="12:36">For now</p>
-            <p data-node-id="12:37">this is more about me than a biography </p>
-          </div>
+          <figure className="biography-portrait">
+            <img src="/about/animesh-tripathi.png" alt="Portrait of Animesh Tripathi" width="500" height="500" />
+          </figure>
           <div className="personal-introduction" data-node-id="12:38">
             <p data-node-id="12:39">I’m Animesh Tripathi. My practice brings together Machine learning, API development, and Design,  with a focus on Reliability and user experience.</p>
             <p data-node-id="12:40">I’m drawn to interactive creative designing, . Here, I share what I am developing, the thinking behind it and some dreams.</p>
@@ -135,10 +135,10 @@ function Dreams() {
 
 const pageTitles = {
   home: 'MESSTripping',
-  biography: 'Biography — MESSTripping',
+  biography: 'मेरे बारे में About Me — MESSTripping',
   projects: 'प्रोजैक्ट Projects — MESSTripping',
   socials: 'सोशल Socials — MESSTripping',
-  diary: 'डायरी Diary — MESSTripping',
+  ...(import.meta.env.DEV ? { blog: 'ब्लॉग Blog — MESSTripping' } : {}),
   dreams: 'सपने Dreams — MESSTripping',
   game: 'Kill a Spirit — सपने Dreams — MESSTripping',
 };
@@ -151,7 +151,7 @@ function App() {
     document.title = pageTitles[page];
   }, [page]);
 
-  if (page === 'diary') return <Diary navigation={<Navigation currentPage="Diary" />} />;
+  if (import.meta.env.DEV && page === 'blog') return <Blog navigation={<Navigation currentPage="Blog" />} />;
   if (page === 'socials') return <Socials navigation={<Navigation currentPage="Socials" />} />;
   if (page === 'projects') return <Projects navigation={<Navigation currentPage="Projects" />} />;
   if (page === 'dreams') return <Dreams />;
