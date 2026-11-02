@@ -1,5 +1,5 @@
 import React from 'react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import PageLayout from './PageLayout';
 import './projects.css';
 
 const projects = [
@@ -49,18 +49,11 @@ const projects = [
 
 export default function Projects({ navigation }) {
   return (
-    <main className="games-page projects-page">
-      <a className="return-home" href="/">
-        <span className="back-arrow" aria-hidden="true">←</span>
-        <span>Home</span>
-      </a>
-
-      {navigation}
-
+    <PageLayout className="games-page projects-page" titleId="projects-title" pageName="Projects" navigation={navigation}>
       <section className="games-introduction" aria-labelledby="projects-title">
         <header className="games-heading">
           <p lang="hi">प्रोजैक्ट</p>
-          <h1 id="projects-title">Projects<span className="games-count">04</span></h1>
+          <h1 id="projects-title">Projects<span className="games-count" aria-hidden="true">04</span></h1>
         </header>
         <p className="games-description">Ideas made into things.<br />A few things I’ve been building.</p>
       </section>
@@ -76,7 +69,7 @@ export default function Projects({ navigation }) {
 
             <div className="game-card-details">
               <div className="game-card-title">
-                <span className="game-number">{String(index + 1).padStart(2, '0')}</span>
+                <span className="game-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                 <div>
                   <h2 id={`${project.id}-title`}>{project.name}</h2>
                   <p>{project.description}</p>
@@ -85,22 +78,13 @@ export default function Projects({ navigation }) {
               <a className="game-launch" href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`${project.linkLabel || 'View on GitHub'}: ${project.name} (opens in a new tab)`}>{project.linkLabel || 'View on GitHub'} <span aria-hidden="true">↗</span></a>
             </div>
 
-            <div className="game-card-notes">
+            <footer className="game-card-notes">
               <span>{project.category}</span>
               <span>{project.technologies}</span>
-            </div>
+            </footer>
           </article>
         ))}
       </div>
-
-      <footer className="brand-signature">
-        <div className="footer-rule" />
-        <div className="signature-context">
-          <p className="signature-wordmark"><span className="mess">MESS</span><span className="tripping">Tripping</span></p>
-          <p className="page-context">MESSTripping / Projects</p>
-        </div>
-      </footer>
-      <SpeedInsights />
-    </main>
+    </PageLayout>
   );
 }

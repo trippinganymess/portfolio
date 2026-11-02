@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import PageLayout from './PageLayout';
 import Projects from './Projects';
 import Socials from './Socials';
 import Diary from './Diary';
@@ -38,19 +38,22 @@ const links = [
 function Navigation({ currentPage, dreamsLinkProps }) {
   return (
     <nav className="navigation" aria-label="Portfolio">
-      {links.map(({ hindi, english, href, source, node }) => (
-        <a
-          key={english}
-          href={href}
-          aria-current={currentPage === english ? 'page' : undefined}
-          data-node-id={node}
-          data-figma-href={source || href}
-          {...(english === 'Dreams' ? dreamsLinkProps : {})}
-        >
-          <span lang="hi">{hindi}</span>
-          <span className="navigation-english">{english}</span>
-        </a>
-      ))}
+      <ul role="list">
+        {links.map(({ hindi, english, href, source, node }) => (
+          <li key={english}>
+            <a
+              href={href}
+              aria-current={currentPage === english ? 'page' : undefined}
+              data-node-id={node}
+              data-figma-href={source || href}
+              {...(english === 'Dreams' ? dreamsLinkProps : {})}
+            >
+              <span lang="hi">{hindi}</span>
+              <span className="navigation-english">{english}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }
@@ -58,29 +61,21 @@ function Navigation({ currentPage, dreamsLinkProps }) {
 function Home() {
   const { dreamsLinkProps, animation } = useHomeAnimation();
   return (
-    <main className="home" data-figma-page="placeholder.home.com">
-      <Navigation dreamsLinkProps={dreamsLinkProps} />
+    <PageLayout className="home" titleId="home-title" navigation={<Navigation dreamsLinkProps={dreamsLinkProps} />} data-figma-page="placeholder.home.com">
+      <h1 id="home-title" className="visually-hidden">MESSTripping</h1>
       {animation}
-      <div className="wordmark" data-node-id="1:61">
+      <div className="wordmark" aria-hidden="true" data-node-id="1:61">
         <ShaderEffect className="wordmark-effect" shaders={shaders}>
-          <h1 className="wordmark-text"><span className="mess">MESS</span><span className="tripping">Tripping</span></h1>
+          <p className="wordmark-text"><span className="mess">MESS</span><span className="tripping">Tripping</span></p>
         </ShaderEffect>
       </div>
-      <SpeedInsights />
-    </main>
+    </PageLayout>
   );
 }
 
 function Biography() {
   return (
-    <main className="biography" data-figma-page="placeholder.biography.com" data-node-id="12:3">
-      <a className="return-home" href="/" data-node-id="12:4">
-        <span className="back-arrow" aria-hidden="true" data-node-id="12:5">←</span>
-        <span data-node-id="12:6">Home</span>
-      </a>
-
-      <Navigation currentPage="Biography" />
-
+    <PageLayout className="biography" titleId="biography-title" pageName="Biography" navigation={<Navigation currentPage="Biography" />} data-figma-page="placeholder.biography.com" data-node-id="12:3">
       <section className="biography-introduction" aria-labelledby="biography-title" data-node-id="12:30">
         <header className="biography-heading" data-node-id="12:31">
           <p lang="hi" data-node-id="12:32">आत्मकथा</p>
@@ -97,33 +92,17 @@ function Biography() {
           </div>
         </div>
       </section>
-
-      <footer className="brand-signature" data-node-id="12:41">
-        <div className="footer-rule" data-node-id="12:42" />
-        <div className="signature-context" data-node-id="12:43">
-          <p className="signature-wordmark" data-node-id="12:44"><span className="mess">MESS</span><span className="tripping">Tripping</span></p>
-          <p className="page-context" data-node-id="12:45">MESSTripping / Biography</p>
-        </div>
-      </footer>
-      <SpeedInsights />
-    </main>
+    </PageLayout>
   );
 }
 
 function Dreams() {
   return (
-    <main className="games-page">
-      <a className="return-home" href="/">
-        <span className="back-arrow" aria-hidden="true">←</span>
-        <span>Home</span>
-      </a>
-
-      <Navigation currentPage="Dreams" />
-
+    <PageLayout className="games-page" titleId="games-title" pageName="Dreams" navigation={<Navigation currentPage="Dreams" />}>
       <section className="games-introduction" aria-labelledby="games-title">
         <header className="games-heading">
           <p lang="hi">सपने</p>
-          <h1 id="games-title">Dreams<span className="games-count">01</span></h1>
+          <h1 id="games-title">Dreams<span className="games-count" aria-hidden="true">01</span></h1>
         </header>
         <p className="games-description">Little worlds to get lost in.<br />Stay a while. Play a little.</p>
       </section>
@@ -137,29 +116,20 @@ function Dreams() {
 
         <div className="game-card-details">
           <div className="game-card-title">
-            <span className="game-number">01</span>
+            <span className="game-number" aria-hidden="true">01</span>
             <div>
               <h2 id="spirit-title">Kill a Spirit</h2>
               <p>Chase a glow through a Japanese twilight dream. Each touch fades it further into the twilight.</p>
             </div>
           </div>
-          <a className="game-launch" href="/games/kill-a-spirit/index.html">Enter the dream <span aria-hidden="true">↗</span></a>
+          <a className="game-launch" href="/games/kill-a-spirit/index.html" aria-label="Enter the dream: Kill a Spirit">Enter the dream <span aria-hidden="true">↗</span></a>
         </div>
-        <div className="game-card-notes">
+        <footer className="game-card-notes">
           <span>3D · Pointer & touch</span>
           <span>Best with sound on</span>
-        </div>
+        </footer>
       </article>
-
-      <footer className="brand-signature">
-        <div className="footer-rule" />
-        <div className="signature-context">
-          <p className="signature-wordmark"><span className="mess">MESS</span><span className="tripping">Tripping</span></p>
-          <p className="page-context">MESSTripping / Dreams</p>
-        </div>
-      </footer>
-      <SpeedInsights />
-    </main>
+    </PageLayout>
   );
 }
 
@@ -179,7 +149,6 @@ function App() {
 
   useEffect(() => {
     document.title = pageTitles[page];
-    if (page !== 'home') window.siteMusic.load();
   }, [page]);
 
   if (page === 'diary') return <Diary navigation={<Navigation currentPage="Diary" />} />;

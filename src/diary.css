@@ -10,7 +10,7 @@
 
 .diary-page a { color: inherit; }
 .diary-page [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
-.diary-heading { width: calc(100% - 220px); padding-top: 92px; }
+.diary-heading { width: 100%; padding-top: 92px; }
 .diary-heading > p { font-size: 25px; line-height: 33px; }
 .diary-heading h1 { margin-top: 10px; font-size: 104px; line-height: 1.1; font-weight: 300; letter-spacing: -5px; }
 .diary-coming-soon { margin-top: 100px; padding: 32px 0 12px; border-top: 1px solid rgb(255 255 255 / 25%); }
@@ -27,7 +27,7 @@
 
 @media (max-width: 640px) {
   .diary-page { padding: 24px; }
-  .diary-heading { width: 100%; padding-top: 335px; }
+  .diary-heading { padding-top: 64px; }
   .diary-heading h1 { font-size: clamp(56px, 16vw, 80px); }
   .diary-coming-soon { margin-top: 48px; padding-top: 24px; }
   .diary-coming-soon h2 { max-width: 320px; margin-top: 24px; font-size: clamp(32px, 9vw, 48px); letter-spacing: -1px; }

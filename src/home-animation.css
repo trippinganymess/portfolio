@@ -9,7 +9,6 @@
 }
 
 .home-animation.is-ready { opacity: 1; }
-.home > .navigation { z-index: 3; }
 
 .home-animation-canvas {
   display: block;
@@ -86,6 +85,8 @@
   content: '';
   transition: box-shadow 180ms ease, border-color 180ms ease;
 }
+
+.home-animation-launch[hidden] { display: none; }
 
 .home-animation-launch svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
 .launch-indicator { width: 3px; height: 3px; flex-shrink: 0; border-radius: 50%; background: #b8efff; box-shadow: 0 0 5px #9fe6ff; }

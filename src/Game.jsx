@@ -27,12 +27,15 @@ export default function Game({ onNavigate }) {
   }, [onNavigate]);
 
   return (
-    <iframe
-      ref={frameRef}
-      className="game-frame"
-      src="/games/kill-a-spirit/index.html"
-      title="Kill a Spirit"
-      allow="autoplay"
-    />
+    <main id="main-content" tabIndex={-1} aria-label="Kill a Spirit dream">
+      <h1 className="visually-hidden">Kill a Spirit</h1>
+      <iframe
+        ref={frameRef}
+        className="game-frame"
+        src="/games/kill-a-spirit/index.html"
+        title="Kill a Spirit"
+        allow="autoplay"
+      />
+    </main>
   );
 }

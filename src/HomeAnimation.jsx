@@ -42,17 +42,13 @@ export function useHomeAnimation() {
       setReady(false);
       setFlightReady(false);
       setState('intact');
-      if (motion.matches) {
-        window.siteMusic.load();
-        return;
-      }
+      if (motion.matches) return;
 
       const currentAudioLoader = createHomeAudioLoader({
         lightningSound: lightningSoundRef.current,
         sparkSound: sparkSoundRef.current,
         launchSound: launchSoundRef.current,
         repairSound: repairSoundRef.current,
-        listeningMusic: window.siteMusic,
         onFlightReady: () => {
           if (!cancelled && currentGeneration === generation) setFlightReady(true);
         },
@@ -72,7 +68,6 @@ export function useHomeAnimation() {
           lightningSound: lightningSoundRef.current,
           repairSound: repairSoundRef.current,
           sparkSound: sparkSoundRef.current,
-          listeningMusic: window.siteMusic,
           audioLoader: currentAudioLoader,
           dreamsLink: dreamsRef.current,
           onStateChange: setState,
@@ -88,7 +83,6 @@ export function useHomeAnimation() {
         if (!cancelled && currentGeneration === generation) {
           setReady(false);
           setState('intact');
-          window.siteMusic.load();
         }
       }
     }

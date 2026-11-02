@@ -5,7 +5,7 @@ import { createSketchRobot, ROBOT_HEIGHT } from './robot';
 import { createLandingStation } from './station';
 import { createEffects } from './effects';
 
-export function createHomeAnimation({ stage, canvas, flash, robotAnchor, stationElement, launchSound, lightningSound, repairSound, sparkSound, listeningMusic, audioLoader, dreamsLink, onStateChange, onUnavailable }) {
+export function createHomeAnimation({ stage, canvas, flash, robotAnchor, stationElement, launchSound, lightningSound, repairSound, sparkSound, audioLoader, dreamsLink, onStateChange, onUnavailable }) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -81,7 +81,6 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
   let discharge = 0;
   let shadowRemaining = 0;
   let welding = false;
-  let resumeListeningMusic = null;
   const sounds = [lightningSound, launchSound, repairSound, sparkSound];
   const activeSounds = new Set();
   const resumeSounds = new Set();
@@ -152,11 +151,6 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
   function setState(next) {
     state = next;
     onStateChange(next);
-  }
-
-  function resumeMusic() {
-    resumeListeningMusic?.();
-    resumeListeningMusic = null;
   }
 
   function cancelTimeline() {
@@ -246,7 +240,6 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     // Never create lightning until BOTH complete strike files are available.
     if (disposed || !audioLoader.canStrike()) return;
     strikeRemaining = null;
-    resumeListeningMusic = listeningMusic.suspend();
     effects.createStrike(origin, linkPosition(0.3, 0.5, impact));
     rig.isBobbing = false;
     setState('broken');
@@ -323,7 +316,6 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
       rig.musicPlayerGroup.visible = true;
       rig.headphoneWireMesh.visible = true;
       rig.isBobbing = true;
-      resumeMusic();
     });
   }
 
@@ -450,7 +442,6 @@ export function createHomeAnimation({ stage, canvas, flash, robotAnchor, station
     cancelAnimationFrame(frame);
     cancelTimeline();
     sounds.forEach(stopSound);
-    resumeMusic();
     resizeObserver?.disconnect();
     window.removeEventListener('resize', resize);
     document.removeEventListener('visibilitychange', visibilityChanged);

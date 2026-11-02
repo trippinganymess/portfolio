@@ -1,5 +1,5 @@
 import React from 'react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import PageLayout from './PageLayout';
 import './socials.css';
 
 const profiles = [
@@ -12,14 +12,7 @@ const profiles = [
 
 export default function Socials({ navigation }) {
   return (
-    <main className="games-page socials-page">
-      <a className="return-home" href="/">
-        <span className="back-arrow" aria-hidden="true">←</span>
-        <span>Home</span>
-      </a>
-
-      {navigation}
-
+    <PageLayout className="games-page socials-page" titleId="socials-title" pageName="Socials" navigation={navigation}>
       <section className="games-introduction" aria-labelledby="socials-title">
         <header className="games-heading">
           <p lang="hi">सोशल</p>
@@ -28,7 +21,7 @@ export default function Socials({ navigation }) {
         <p className="games-description">Find me around the internet.</p>
       </section>
 
-      <ul className="socials-list" aria-label="Social profiles">
+      <ul className="socials-list" role="list" aria-label="Social profiles">
         {profiles.map(({ name, logo, handle, href }) => (
           <li key={name}>
             <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${name}: ${handle} (opens in a new tab)`}>
@@ -42,15 +35,6 @@ export default function Socials({ navigation }) {
           </li>
         ))}
       </ul>
-
-      <footer className="brand-signature">
-        <div className="footer-rule" />
-        <div className="signature-context">
-          <p className="signature-wordmark"><span className="mess">MESS</span><span className="tripping">Tripping</span></p>
-          <p className="page-context">MESSTripping / Socials</p>
-        </div>
-      </footer>
-      <SpeedInsights />
-    </main>
+    </PageLayout>
   );
 }

@@ -1,4 +1,4 @@
-export function createHomeAudioLoader({ lightningSound, sparkSound, launchSound, repairSound, listeningMusic, onFlightReady }) {
+export function createHomeAudioLoader({ lightningSound, sparkSound, launchSound, repairSound, onFlightReady }) {
   const abortController = new AbortController();
   const loaded = new Set();
   let strikeLoaded = false;
@@ -30,7 +30,6 @@ export function createHomeAudioLoader({ lightningSound, sparkSound, launchSound,
       flightLoaded = true;
       onFlightReady();
     }).catch(() => { /* Launch stays disabled if a robot cue cannot load. */ });
-    listeningMusic.load();
   }).catch(() => {
     // A failed strike cue leaves Dreams intact and navigation available.
     dispose();
