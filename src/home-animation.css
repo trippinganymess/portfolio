@@ -9,7 +9,6 @@
 }
 
 .home-animation.is-ready { opacity: 1; }
-.home > .navigation { z-index: 3; }
 
 .home-animation-canvas {
   display: block;

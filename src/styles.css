@@ -24,6 +24,42 @@ body { min-width: 240px; }
 
 main[tabindex="-1"]:focus { outline: none; }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  padding: 12px 16px;
+  color: #fff;
+  background: #171775;
+  transform: translateY(calc(-100% - 12px));
+}
+
+.skip-link:focus { transform: none; outline: 2px solid #fff; }
+
+.site-header {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px 32px;
+  width: 100%;
+}
+
+.page-content { flex: 1; width: 100%; min-width: 0; }
+
 .game-frame {
   position: fixed;
   inset: 0;
@@ -38,29 +74,37 @@ main[tabindex="-1"]:focus { outline: none; }
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   min-height: max(610px, 100svh);
   padding: 0 0 1px 1px;
   overflow: hidden;
 }
 
+.home .site-header { padding: 64px; }
+.home .page-content { display: flex; flex-direction: column; justify-content: flex-end; }
+
 .navigation {
-  position: absolute;
-  top: 64px;
-  right: 64px;
-  display: flex;
-  flex-direction: column;
-  gap: 21px;
-  width: 101px;
+  margin-left: auto;
+  max-width: 100%;
   font-size: 17px;
   font-weight: 100;
   line-height: 21px;
+}
+
+.navigation ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .navigation a {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  min-height: 48px;
+  padding: 4px;
   color: inherit;
   text-decoration: none;
 }
@@ -73,7 +117,7 @@ main[tabindex="-1"]:focus { outline: none; }
   line-height: 22px;
 }
 
-.navigation-english { opacity: 0.6; }
+.navigation-english { opacity: 0.75; }
 .navigation a:hover .navigation-english,
 .navigation a[aria-current="page"] .navigation-english { opacity: 1; }
 
@@ -131,7 +175,7 @@ main[tabindex="-1"]:focus { outline: none; }
   text-decoration: none;
 }
 
-.return-home span:last-child { opacity: 0.6; }
+.return-home span:last-child { opacity: 0.75; }
 
 .back-arrow { font-size: 22px; font-weight: 200; }
 
@@ -139,7 +183,7 @@ main[tabindex="-1"]:focus { outline: none; }
   display: flex;
   flex-direction: column;
   gap: 48px;
-  width: min(1000px, calc(100% - 300px));
+  width: min(1000px, 100%);
   padding-top: 100px;
 }
 
@@ -179,7 +223,7 @@ main[tabindex="-1"]:focus { outline: none; }
 }
 
 .brand-signature { width: 100%; margin-top: auto; padding-top: 300px; }
-.footer-rule { height: 1px; background: rgb(255 255 255 / 25%); }
+.footer-rule { height: 1px; margin: 0; border: 0; background: rgb(255 255 255 / 25%); }
 
 .signature-context {
   display: flex;
@@ -196,6 +240,8 @@ main[tabindex="-1"]:focus { outline: none; }
 
 .games-page {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 100svh;
   padding: 64px 64px 50px;
   background: var(--biography-background);
@@ -204,10 +250,10 @@ main[tabindex="-1"]:focus { outline: none; }
 
 .games-page a { color: inherit; }
 .games-page [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
-.games-introduction { width: calc(100% - 220px); padding-top: 92px; }
+.games-introduction { width: 100%; padding-top: 92px; }
 .games-heading > p { font-size: 25px; line-height: 33px; }
 .games-heading h1 { margin-top: 10px; font-size: 104px; line-height: 1.1; font-weight: 300; letter-spacing: -5px; }
-.games-count { display: inline-block; margin: 12px 0 0 20px; vertical-align: top; font-size: 14px; letter-spacing: 0; line-height: 1.5; opacity: 0.6; }
+.games-count { display: inline-block; margin: 12px 0 0 20px; vertical-align: top; font-size: 14px; letter-spacing: 0; line-height: 1.5; opacity: 0.75; }
 .games-description { margin-top: 24px; font-size: 19px; line-height: 1.6; opacity: 0.7; }
 .game-card { margin-top: 64px; }
 .game-preview { position: relative; display: block; aspect-ratio: 1.95; overflow: hidden; background: #504c79; }
@@ -217,20 +263,20 @@ main[tabindex="-1"]:focus { outline: none; }
 .game-preview-play { position: absolute; right: 28px; bottom: 24px; display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgb(255 255 255 / 35%); border-radius: 50%; font-size: 25px; background: rgb(39 34 70 / 25%); }
 .game-card-details { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; padding-top: 30px; }
 .game-card-title { display: flex; gap: 30px; }
-.game-number { padding-top: 11px; font-size: 13px; opacity: 0.5; }
+.game-number { padding-top: 11px; font-size: 13px; opacity: 0.75; }
 .game-card-title h2 { margin: 0; font-size: clamp(26px, 3vw, 38px); line-height: 1.3; font-weight: 300; letter-spacing: -1px; }
 .game-card-title p { max-width: 470px; margin-top: 12px; font-size: 15px; line-height: 1.65; opacity: 0.65; }
 .game-launch { display: flex; align-items: center; flex-shrink: 0; gap: 25px; padding: 9px 0 12px; border-bottom: 1px solid rgb(255 255 255 / 45%); font-size: 17px; text-decoration: none; }
 .game-launch span { font-size: 23px; transition: transform 180ms ease; }
 .game-launch:hover span { transform: translate(2px, -2px); }
-.game-card-notes { display: flex; justify-content: space-between; gap: 20px; padding-top: 25px; margin-top: 28px; border-top: 1px solid rgb(255 255 255 / 20%); font-size: 12px; opacity: 0.55; }
+.game-card-notes { display: flex; justify-content: space-between; gap: 20px; padding-top: 25px; margin-top: 28px; border-top: 1px solid rgb(255 255 255 / 20%); font-size: 12px; opacity: 0.75; }
 .games-page .brand-signature { padding-top: 120px; }
 .game-preview:focus-visible, .game-launch:focus-visible { outline: 2px solid white; outline-offset: 5px; }
 
 @media (max-width: 1100px) {
-  .navigation { top: 40px; right: 40px; }
+  .home .site-header { padding: 40px; }
+  .navigation ul { column-gap: 20px; }
   .biography { padding: 40px; }
-  .biography-introduction { width: calc(100% - 220px); }
   .biography-heading h1 { font-size: 80px; letter-spacing: -3px; }
   .biography-copy { flex-direction: column; gap: 24px; }
   .copy-guidance { flex-basis: auto; width: 176px; }
@@ -242,9 +288,11 @@ main[tabindex="-1"]:focus { outline: none; }
 }
 
 @media (max-width: 640px) {
-  .navigation { top: 24px; right: 24px; }
+  .home .site-header { padding: 24px; }
+  .navigation { flex-basis: 100%; font-size: clamp(11px, 3vw, 14px); }
+  .navigation ul { justify-content: space-between; gap: 12px clamp(6px, 2vw, 12px); }
   .biography { min-height: 100svh; padding: 24px; }
-  .biography-introduction { width: 100%; padding-top: 335px; gap: 40px; }
+  .biography-introduction { padding-top: 64px; gap: 40px; }
   .biography-heading h1 { font-size: clamp(44px, 13vw, 80px); line-height: 1.1; }
   .personal-introduction { font-size: 21px; line-height: 1.55; }
   .brand-signature { padding-top: 100px; }
@@ -252,7 +300,7 @@ main[tabindex="-1"]:focus { outline: none; }
   .signature-wordmark .mess { font-size: clamp(48px, 17vw, 100px); line-height: 1.15; }
   .signature-wordmark .tripping { font-size: clamp(19px, 5.44vw, 32px); }
   .games-page { padding: 24px; }
-  .games-introduction { width: 100%; padding-top: 335px; }
+  .games-introduction { padding-top: 64px; }
   .games-heading h1 { font-size: clamp(56px, 16vw, 80px); letter-spacing: -3px; }
   .games-count { margin-top: 6px; margin-left: 12px; }
   .games-description { font-size: 17px; }

@@ -9,7 +9,6 @@ const THREE = { ...ThreeCore, EffectComposer, RenderPass, UnrealBloomPass };
 
 export function initGame() {
     let gameStarted = false;
-    let resumeHomeMusic = null;
     let elapsed = 0;
     let windStrength = 0;
     let lastShatterAt = -Infinity;
@@ -1295,7 +1294,6 @@ export function initGame() {
     document.getElementById('btn-start').addEventListener('click', () => {
       if (gameStarted) return;
       gameStarted = true;
-      resumeHomeMusic = window.siteMusic?.suspend();
       elapsed = 0;
       lastFrameAt = performance.now();
       state.spiritPos.set(0, 0.5, 0);
@@ -1325,8 +1323,6 @@ export function initGame() {
       if (sound.ctx) sound.ctx.close().catch(() => {});
       if (composer) composer.dispose();
       renderer.dispose();
-      resumeHomeMusic?.();
-      resumeHomeMusic = null;
     }
     window.addEventListener('pagehide', event => {
       atmosphere.setPaused(true);
