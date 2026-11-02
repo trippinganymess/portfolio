@@ -10,8 +10,6 @@
 @media (min-width: 641px) and (max-width: 900px) {
   .projects-page .games-heading h1 { font-size: clamp(52px, 8.5vw, 76px); }
   .projects-page .games-count { margin-left: 10px; }
-  .project-card .game-card-details { gap: 24px; }
-  .project-card .game-launch { font-size: 14px; gap: 14px; }
 }
 
 @media (max-width: 640px) {

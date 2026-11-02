@@ -123,7 +123,6 @@ function Dreams() {
               <p>Chase a glow through a Japanese twilight dream. Each touch fades it further into the twilight.</p>
             </div>
           </div>
-          <a className="game-launch" href="/games/kill-a-spirit/index.html" aria-label="Enter the dream: Kill a Spirit">Enter the dream <ArrowIcon /></a>
         </div>
         <footer className="game-card-notes">
           <span>3D · Pointer & touch</span>

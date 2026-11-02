@@ -76,7 +76,6 @@ export default function Projects({ navigation }) {
                   <p>{project.description}</p>
                 </div>
               </div>
-              <a className="game-launch" href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`${project.linkLabel || 'View on GitHub'}: ${project.name} (opens in a new tab)`}>{project.linkLabel || 'View on GitHub'} <ArrowIcon /></a>
             </div>
 
             <footer className="game-card-notes">
