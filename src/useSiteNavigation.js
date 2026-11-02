@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 export function getPage(pathname) {
   if (/^\/games\/kill-a-spirit(?:\/(?:index\.html)?)?$/.test(pathname)) return 'game';
-  if (import.meta.env.DEV && /^\/blog(?:\/|\.html)?$/.test(pathname)) return 'blog';
   const match = /^\/(biography|projects|socials|dreams|games)(?:\/|\.html)?$/.exec(pathname);
   if (match) return match[1] === 'games' ? 'dreams' : match[1];
   if (pathname === '/' || pathname === '/index.html') {

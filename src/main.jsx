@@ -11,8 +11,6 @@ import { ShaderEffect } from './lib/custom-effect-runtime/index';
 import { setup, render, manifest } from './lib/custom-effects/CodeComponentId_91040247ba61849c1772a9a1caf10833c2700c71_8351';
 import './styles.css';
 
-const Blog = import.meta.env.DEV ? (await import('./Blog')).default : null;
-
 const shaders = [{
   setup,
   render,
@@ -33,7 +31,6 @@ const links = [
   { hindi: 'मेरे बारे में', english: 'About Me', href: '/biography', source: 'https://placeholder.biography.com', node: '1:4' },
   { hindi: 'प्रोजैक्ट', english: 'Projects', href: '/projects', node: '1:65' },
   { hindi: 'सोशल', english: 'Socials', href: '/socials', node: '1:65' },
-  ...(import.meta.env.DEV ? [{ hindi: 'ब्लॉग', english: 'Blog', href: '/blog', node: '1:65' }] : []),
   { hindi: 'सपने', english: 'Dreams', href: '/dreams' },
 ];
 
@@ -138,7 +135,6 @@ const pageTitles = {
   biography: 'मेरे बारे में About Me — MESSTripping',
   projects: 'प्रोजैक्ट Projects — MESSTripping',
   socials: 'सोशल Socials — MESSTripping',
-  ...(import.meta.env.DEV ? { blog: 'ब्लॉग Blog — MESSTripping' } : {}),
   dreams: 'सपने Dreams — MESSTripping',
   game: 'Kill a Spirit — सपने Dreams — MESSTripping',
 };
@@ -151,7 +147,6 @@ function App() {
     document.title = pageTitles[page];
   }, [page]);
 
-  if (import.meta.env.DEV && page === 'blog') return <Blog navigation={<Navigation currentPage="Blog" />} />;
   if (page === 'socials') return <Socials navigation={<Navigation currentPage="Socials" />} />;
   if (page === 'projects') return <Projects navigation={<Navigation currentPage="Projects" />} />;
   if (page === 'dreams') return <Dreams />;
