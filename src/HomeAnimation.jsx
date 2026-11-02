@@ -6,7 +6,6 @@ export function useHomeAnimation() {
   const canvasRef = useRef(null);
   const robotRef = useRef(null);
   const stationRef = useRef(null);
-  const dreamsRef = useRef(null);
   const controllerRef = useRef(null);
   const [ready, setReady] = useState(false);
 
@@ -30,7 +29,6 @@ export function useHomeAnimation() {
           canvas: canvasRef.current,
           robotAnchor: robotRef.current,
           stationElement: stationRef.current,
-          dreamsLink: dreamsRef.current,
           onUnavailable: () => {
             setReady(false);
           },
@@ -58,7 +56,6 @@ export function useHomeAnimation() {
   }, []);
 
   return {
-    dreamsLinkProps: { ref: dreamsRef, className: 'dreams-link' },
     animation: (
       <div ref={stageRef} className={`home-animation${ready ? ' is-ready' : ''}`} aria-hidden="true">
         <canvas ref={canvasRef} className="home-animation-canvas" />

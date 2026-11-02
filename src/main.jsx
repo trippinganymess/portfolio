@@ -7,6 +7,7 @@ import Socials from './Socials';
 import Game from './Game';
 import { getPage, useSiteNavigation } from './useSiteNavigation';
 import { useHomeAnimation } from './HomeAnimation';
+import { useDreamsSpark } from './DreamsSpark';
 import { ShaderEffect } from './lib/custom-effect-runtime/index';
 import { setup, render, manifest } from './lib/custom-effects/CodeComponentId_91040247ba61849c1772a9a1caf10833c2700c71_8351';
 import './styles.css';
@@ -34,7 +35,8 @@ const links = [
   { hindi: 'सपने', english: 'Dreams', href: '/dreams' },
 ];
 
-function Navigation({ currentPage, dreamsLinkProps }) {
+function Navigation({ currentPage }) {
+  const { linkRef, spark } = useDreamsSpark(currentPage !== 'Dreams');
   return (
     <nav className="navigation" aria-label="Portfolio">
       <ul role="list">
@@ -45,10 +47,11 @@ function Navigation({ currentPage, dreamsLinkProps }) {
               aria-current={currentPage === english ? 'page' : undefined}
               data-node-id={node}
               data-figma-href={source || href}
-              {...(english === 'Dreams' ? dreamsLinkProps : {})}
+              {...(english === 'Dreams' ? { ref: linkRef, className: 'dreams-link' } : {})}
             >
               <span lang="hi">{hindi}</span>
               <span className="navigation-english">{english}</span>
+              {english === 'Dreams' && spark}
             </a>
           </li>
         ))}
@@ -58,9 +61,9 @@ function Navigation({ currentPage, dreamsLinkProps }) {
 }
 
 function Home() {
-  const { dreamsLinkProps, animation } = useHomeAnimation();
+  const { animation } = useHomeAnimation();
   return (
-    <PageLayout className="home" titleId="home-title" navigation={<Navigation dreamsLinkProps={dreamsLinkProps} />} data-figma-page="placeholder.home.com">
+    <PageLayout className="home" titleId="home-title" navigation={<Navigation />} data-figma-page="placeholder.home.com">
       <h1 id="home-title" className="visually-hidden">MESSTripping</h1>
       {animation}
       <div className="wordmark" aria-hidden="true" data-node-id="1:61">

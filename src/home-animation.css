@@ -38,7 +38,7 @@
 
 @media (max-width: 640px) {
   .home-animation {
-    --dock-height: calc(var(--home-title-size) * 1.2 + 34px);
+    --dock-height: calc(var(--home-title-size) * 1.2 * var(--text-scale) + 34px);
     --robot-height: clamp(192px, 26vh, 220px);
   }
   .home-animation-station { width: 174px; }

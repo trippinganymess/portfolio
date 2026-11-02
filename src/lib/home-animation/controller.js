@@ -3,8 +3,9 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { createSketchRobot, ROBOT_HEIGHT } from './robot';
 import { createLandingStation } from './station';
 import { createEffects } from './effects';
+import { createRobotCrows } from './crows';
 
-export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement, dreamsLink, onUnavailable }) {
+export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement, onUnavailable }) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -45,11 +46,11 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
   mainLight.target = robot;
   rimLight.target = robot;
   const rig = robot.userData;
+  const crows = createRobotCrows({ scene, robot, onPhaseChange: phase => { stage.dataset.crowState = phase; } });
   const landingStation = createLandingStation();
   scene.add(landingStation);
   const effects = createEffects(scene);
   const station = new THREE.Vector3();
-  const sparkOrigin = new THREE.Vector3();
   const keyLightOffset = new THREE.Vector3(-170, 280, 330);
   const rimLightOffset = new THREE.Vector3(180, 110, -160);
   let bounds;
@@ -59,19 +60,8 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
   let disposed = false;
   let lastFrame = null;
   let elapsed = 0;
-  let sparkRemaining = 0.4;
   let noteRemaining = 0.65;
   let shadowRemaining = 0;
-
-  function linkPosition(anchorX, anchorY) {
-    const link = dreamsLink.getBoundingClientRect();
-    sparkOrigin.set(
-      link.left + link.width * anchorX - bounds.left - bounds.width / 2,
-      bounds.height / 2 - (link.top + link.height * anchorY - bounds.top),
-      105,
-    );
-    return sparkOrigin;
-  }
 
   function updateRobotPosition() {
     robot.scale.set(-scale, scale, scale);
@@ -110,10 +100,13 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     const delta = lastFrame === null ? 0 : Math.min((now - lastFrame) / 1000, 0.05);
     lastFrame = now;
     elapsed += delta;
-    rig.headGroup.rotation.z = -0.12 + Math.sin(elapsed * 3.8) * 0.035;
+    const headMotion = crows.advance(delta);
+    rig.headGroup.rotation.z = -0.12 + Math.sin(elapsed * 3.8) * 0.035 + headMotion.roll;
+    rig.headGroup.rotation.y = headMotion.yaw;
     rig.elbowGroup.rotation.z = Math.sin(elapsed * 3.8 - 0.5) * 0.018;
     rig.upperBodyGroup.rotation.z = Math.sin(elapsed * 1.9) * 0.006;
     updateRobotPosition();
+    crows.update(elapsed, bounds, scale);
     rig.updateHeadphoneWire();
     landingStation.userData.update(elapsed);
 
@@ -121,11 +114,6 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     if (noteRemaining <= 0) {
       effects.musicNote(robot.position, scale);
       noteRemaining = 1.2;
-    }
-    sparkRemaining -= delta;
-    if (sparkRemaining <= 0) {
-      effects.shortCircuit(linkPosition(0.25, 0.45), 0.7 + Math.random() * 0.5);
-      sparkRemaining = 0.5 + Math.random() * 1.1;
     }
     effects.update(delta, elapsed);
     shadowRemaining -= delta;
@@ -169,17 +157,20 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     document.removeEventListener('visibilitychange', visibilityChanged);
     canvas.removeEventListener('webglcontextlost', contextLost);
     effects.dispose();
+    crows.dispose();
+    delete stage.dataset.crowState;
     disposeResources(robot);
     disposeResources(landingStation);
     rig.textures.forEach(texture => texture.dispose());
     environment.dispose();
     mainLight.shadow.dispose();
     renderer.dispose();
+    renderer.forceContextLoss();
   }
 
   try {
     resizeObserver = new ResizeObserver(resize);
-    for (const element of [stage, robotAnchor, stationElement, dreamsLink, dreamsLink.offsetParent]) {
+    for (const element of [stage, robotAnchor, stationElement]) {
       if (element) resizeObserver.observe(element);
     }
     window.addEventListener('resize', resize);

@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Honk&family=Noto+Sans+Devanagari:wght@300&display=swap');
+@import url('https://fonts.cdnfonts.com/css/pricedown');
+
+:root {
+  --text-scale: 1.1;
+  font-size: calc(16px * var(--text-scale));
+  --font-body: 'Pricedown Bl', sans-serif;
+  --font-display: 'Honk', sans-serif;
+  --page-background: #262d17;
+  --page-foreground: #dcc2b6;
+  --page-secondary: #c9b1a5;
+  --title-foreground: #b8a197;
+  font-palette: --site-honk;
+}
+
+[lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
+h1, h2, h3, h4, h5, h6 { color: var(--title-foreground); }
+
+@font-palette-values --site-honk {
+  font-family: 'Honk';
+  override-colors: 0 #1e2412, 1 #202613, 2 #f7b0ae, 3 #f7b0ae,
+    4 #f1a48e, 5 #ea9772, 6 #e5915b, 7 #e5915b;
+}
