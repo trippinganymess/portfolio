@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Honk&family=Noto+Sans+Devanagari:wght@300&display=swap');
-@import url('https://fonts.cdnfonts.com/css/pricedown');
+@import url('https://fonts.googleapis.com/css2?family=Honk&family=Noto+Sans:wght@400&family=Noto+Sans+Devanagari:wght@300&display=swap');
 
 :root {
   --text-scale: 1.1;
   font-size: calc(16px * var(--text-scale));
-  --font-body: 'Pricedown Bl', sans-serif;
+  --font-body: 'Noto Sans', sans-serif;
   --font-display: 'Honk', sans-serif;
   --page-background-olive: #262d17;
   --page-background: #000000;
