@@ -85,7 +85,7 @@ function Biography({ embedded = false }) {
           </figure>
           <div className="personal-introduction" data-node-id="12:38">
             <p data-node-id="12:39">I’m Animesh Tripathi. My practice brings together Machine learning, API development, and Design,  with a focus on Reliability and user experience.</p>
-            <p data-node-id="12:40">I’m drawn to interactive creative designing, . Here, I share what I am developing, the thinking behind it and some dreams.</p>
+            <p data-node-id="12:40">I’m drawn to interactive creative designing . Here, I share what I am developing, the thinking behind it and some dreams.</p>
           </div>
         </div>
       </section>
