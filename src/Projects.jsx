@@ -28,7 +28,7 @@ const projects = [
   {
     id: 'lca',
     name: 'LCA',
-    href: 'https://www.sunchillflower.me',
+    href: 'https://lca-kdxbkvovi-animeshs-projects-ca065a65.vercel.app/login',
     linkLabel: 'Visit project',
     description: 'A shared space for coding practice. Build learning roadmaps, work through problems with your group, and follow everyone’s progress through activity heatmaps.',
     caption: 'Small steps. Shared progress.',
@@ -48,13 +48,14 @@ const projects = [
   },
 ];
 
-export default function Projects({ navigation }) {
+export default function Projects({ navigation, embedded = false }) {
+  const Heading = embedded ? 'h2' : 'h1';
   return (
-    <PageLayout className="games-page projects-page" titleId="projects-title" pageName="Projects" navigation={navigation}>
+    <PageLayout className="games-page projects-page" titleId="projects-title" pageName="Projects" navigation={navigation} embedded={embedded} sectionId="projects">
       <section className="games-introduction" aria-labelledby="projects-title">
         <header className="games-heading">
           <p lang="hi">प्रोजैक्ट</p>
-          <h1 id="projects-title">Projects<span className="games-count" aria-hidden="true">04</span></h1>
+          <Heading id="projects-title">Projects<span className="games-count" aria-hidden="true">04</span></Heading>
         </header>
         <p className="games-description">Ideas made into things.<br />A few things I’ve been building.</p>
       </section>

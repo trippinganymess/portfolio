@@ -5,7 +5,7 @@ import { createLandingStation } from './station';
 import { createEffects } from './effects';
 import { createRobotCrows } from './crows';
 
-export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement, onUnavailable }) {
+export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement, onUnavailable, scrollReactive = false }) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -62,6 +62,41 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
   let elapsed = 0;
   let noteRemaining = 0.65;
   let shadowRemaining = 0;
+  let fall = scrollReactive ? 1 : 0;
+  let thrust = 0;
+  let landing = 0;
+  let pageProgress = 0;
+  let remainingScroll = 0;
+  let atEnd = false;
+  let dockHeight = 0;
+  let scrollSpeed = 0;
+  let scrollDirection = 1;
+  let previousScroll = window.scrollY;
+  let scrollTime = performance.now();
+  const upperBodyY = rig.upperBodyGroup.position.y;
+
+  function readJourney() {
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - bounds.height);
+    const scroll = THREE.MathUtils.clamp(window.scrollY, 0, maxScroll);
+    pageProgress = maxScroll ? scroll / maxScroll : 1;
+    remainingScroll = maxScroll - scroll;
+    atEnd = remainingScroll <= 2;
+    const dock = stationElement.getBoundingClientRect();
+    landingStation.position.set(
+      dock.left + dock.width / 2 - bounds.left - bounds.width / 2,
+      bounds.height / 2 - (dock.bottom - bounds.top),
+      80,
+    );
+  }
+
+  function onScroll() {
+    const now = performance.now();
+    scrollSpeed = THREE.MathUtils.clamp((window.scrollY - previousScroll) / Math.max(now - scrollTime, 16), -3, 3);
+    if (Math.abs(window.scrollY - previousScroll) > 0.5) scrollDirection = Math.sign(window.scrollY - previousScroll);
+    previousScroll = window.scrollY;
+    scrollTime = now;
+    readJourney();
+  }
 
   function updateRobotPosition() {
     robot.scale.set(-scale, scale, scale);
@@ -75,14 +110,16 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     bounds = stage.getBoundingClientRect();
     const anchor = robotAnchor.getBoundingClientRect();
     const dock = stationElement.getBoundingClientRect();
+    dockHeight = dock.height;
     scale = anchor.height / ROBOT_HEIGHT;
     station.set(
       anchor.left + anchor.width / 2 - bounds.left - bounds.width / 2,
       bounds.height / 2 - (anchor.top + anchor.height / 2 - bounds.top),
       80,
     );
-    landingStation.position.set(bounds.width / 2 - dock.width / 2, -bounds.height / 2, 80);
+    landingStation.position.set(dock.left + dock.width / 2 - bounds.left - bounds.width / 2, bounds.height / 2 - (dock.bottom - bounds.top), 80);
     landingStation.userData.resize(dock.width, dock.height, station.x - landingStation.position.x + 6.3 * scale);
+    if (scrollReactive) readJourney();
     camera.left = -bounds.width / 2;
     camera.right = bounds.width / 2;
     camera.top = bounds.height / 2;
@@ -101,17 +138,57 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     lastFrame = now;
     elapsed += delta;
     const headMotion = crows.advance(delta);
-    rig.headGroup.rotation.z = -0.12 + Math.sin(elapsed * 3.8) * 0.035 + headMotion.roll;
-    rig.headGroup.rotation.y = headMotion.yaw;
-    rig.elbowGroup.rotation.z = Math.sin(elapsed * 3.8 - 0.5) * 0.018;
-    rig.upperBodyGroup.rotation.z = Math.sin(elapsed * 1.9) * 0.006;
+    const moving = scrollReactive && !atEnd;
+    const targetFall = moving && scrollDirection > 0 ? 1 : 0;
+    const targetThrust = moving && scrollDirection < 0 ? 1 : 0;
+    const blend = 1 - Math.exp(-delta * 12);
+    fall = THREE.MathUtils.lerp(fall, targetFall, blend);
+    thrust = THREE.MathUtils.lerp(thrust, targetThrust, blend);
+    landing = THREE.MathUtils.lerp(landing, scrollReactive && atEnd ? 1 : 0, blend);
+    const action = Math.max(fall, thrust);
+    rig.headGroup.rotation.z = -0.12 + (Math.sin(elapsed * 3.8) * 0.035 + headMotion.roll) * (1 - action) + fall * Math.sin(elapsed * 12) * 0.08 - thrust * 0.16;
+    rig.headGroup.rotation.y = headMotion.yaw * (1 - action);
+    rig.shoulderArmGroup.rotation.z = fall * (2.55 + Math.sin(elapsed * 14) * 0.1) - thrust * 0.5;
+    rig.elbowGroup.rotation.z = Math.sin(elapsed * 3.8 - 0.5) * 0.018 * (1 - action) - fall * 0.9 - thrust * 0.3;
+    rig.secondArmGroup.rotation.z = fall * (3.2 - Math.sin(elapsed * 13) * 0.12) - thrust * 0.75;
+    rig.secondElbowGroup.rotation.z = -fall * 1.65 - thrust * 0.2;
+    rig.secondArmGroup.visible = action > 0.03;
+    rig.gestureHandGroup.visible = action > 0.03;
+    rig.musicPlayerGroup.visible = action < 0.15;
+    rig.headphoneWireMesh.visible = action < 0.15;
+    rig.upperBodyGroup.rotation.z = Math.sin(elapsed * 1.9) * 0.006 * (1 - action) + fall * 0.07 - thrust * 0.08 - landing * 0.12;
+    rig.upperBodyGroup.position.y = upperBodyY - landing * 12;
+    rig.rocketPackGroup.visible = thrust > 0.03;
+    for (const [index, jet] of rig.rocketJets.entries()) {
+      const flicker = 0.85 + Math.sin(elapsed * 55 + index * 2) * 0.15;
+      jet.flame.scale.set(0.85 + thrust * 0.2, thrust * flicker, 1);
+      jet.plumeMaterial.opacity = thrust * 0.65;
+    }
     updateRobotPosition();
+    robot.rotation.z = fall * (Math.sin(elapsed * 8) * 0.06 + scrollSpeed * 0.05) - thrust * 0.09;
+    if (scrollReactive) {
+      const flightStart = station.y + Math.min(48, bounds.height * 0.06);
+      const flightEnd = station.y + Math.min(12, bounds.height * 0.02);
+      const progress = THREE.MathUtils.smoothstep(pageProgress, 0, 1);
+      const airborneY = THREE.MathUtils.lerp(flightStart, flightEnd, progress) + Math.sin(elapsed * 2.2) * 5;
+      robot.position.y = THREE.MathUtils.lerp(airborneY, station.y, landing);
+    }
+    landingStation.visible = !scrollReactive || remainingScroll < dockHeight + 40;
+    mainLight.position.copy(robot.position).add(keyLightOffset);
+    rimLight.position.copy(robot.position).add(rimLightOffset);
+    stage.dataset.motion = scrollReactive && atEnd ? (landing > 0.96 ? 'landed' : 'landing') : targetThrust || thrust > 0.08 ? 'ascending' : targetFall || fall > 0.08 ? 'falling' : 'idle';
+    stage.dataset.atEnd = String(atEnd);
+    stage.dataset.pageProgress = pageProgress.toFixed(4);
+    stage.dataset.padVisible = String(landingStation.visible);
+    stage.dataset.landing = landing.toFixed(3);
+    stage.dataset.fall = fall.toFixed(3);
+    stage.dataset.thrust = thrust.toFixed(3);
     crows.update(elapsed, bounds, scale);
     rig.updateHeadphoneWire();
     landingStation.userData.update(elapsed);
 
     noteRemaining -= delta;
-    if (noteRemaining <= 0) {
+    if (noteRemaining <= 0 && action < 0.1) {
       effects.musicNote(robot.position, scale);
       noteRemaining = 1.2;
     }
@@ -154,11 +231,19 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     cancelAnimationFrame(frame);
     resizeObserver?.disconnect();
     window.removeEventListener('resize', resize);
+    window.removeEventListener('scroll', onScroll);
     document.removeEventListener('visibilitychange', visibilityChanged);
     canvas.removeEventListener('webglcontextlost', contextLost);
     effects.dispose();
     crows.dispose();
     delete stage.dataset.crowState;
+    delete stage.dataset.motion;
+    delete stage.dataset.atEnd;
+    delete stage.dataset.pageProgress;
+    delete stage.dataset.padVisible;
+    delete stage.dataset.landing;
+    delete stage.dataset.fall;
+    delete stage.dataset.thrust;
     disposeResources(robot);
     disposeResources(landingStation);
     rig.textures.forEach(texture => texture.dispose());
@@ -174,6 +259,10 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
       if (element) resizeObserver.observe(element);
     }
     window.addEventListener('resize', resize);
+    if (scrollReactive) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      for (const section of document.querySelectorAll('.scroll-section')) resizeObserver.observe(section);
+    }
     document.addEventListener('visibilitychange', visibilityChanged);
     canvas.addEventListener('webglcontextlost', contextLost);
     resize();

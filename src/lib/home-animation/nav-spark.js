@@ -24,8 +24,10 @@ export function createNavSpark({ canvas, link }) {
     const width = Math.max(1, Math.min(innerWidth, bounds.right + 128) - left);
     const height = Math.max(1, Math.min(innerHeight, bounds.bottom + 128) - top);
     visible = bounds.bottom > 0 && bounds.top < innerHeight;
-    canvas.style.left = `${left}px`;
-    canvas.style.top = `${top}px`;
+    // The inset header is the absolute canvas's containing block.
+    const header = link.closest('.scroll-header')?.getBoundingClientRect();
+    canvas.style.left = `${left - (header?.left || 0)}px`;
+    canvas.style.top = `${top - (header?.top || 0)}px`;
     camera.left = -width / 2;
     camera.right = width / 2;
     camera.top = height / 2;
