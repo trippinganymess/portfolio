@@ -11,13 +11,14 @@ const profiles = [
   { name: 'Spotify', logo: 'spotify', handle: 'My listening corner', href: 'https://open.spotify.com/user/31jujowcq52rkh336haxo6tkz5wi' },
 ];
 
-export default function Socials({ navigation }) {
+export default function Socials({ navigation, embedded = false }) {
+  const Heading = embedded ? 'h2' : 'h1';
   return (
-    <PageLayout className="games-page socials-page" titleId="socials-title" pageName="Socials" navigation={navigation}>
+    <PageLayout className="games-page socials-page" titleId="socials-title" pageName="Socials" navigation={navigation} embedded={embedded} sectionId="socials">
       <section className="games-introduction" aria-labelledby="socials-title">
         <header className="games-heading">
           <p lang="hi">सोशल</p>
-          <h1 id="socials-title">Socials</h1>
+          <Heading id="socials-title">Socials</Heading>
         </header>
         <p className="games-description">Find me around the internet.</p>
       </section>

@@ -11,6 +11,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261102-2">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261102-2">
   <link rel="stylesheet" href="./game.css">
+  <link rel="stylesheet" href="/navigation.css">
   <script src="/audio-loader.js"></script>
   <script src="/click-sound.js" defer></script>
   <script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js"}}</script>
@@ -19,9 +20,15 @@
 <body>
   <div id="canvas-container" aria-label="Interactive twilight lake. Move or touch the spirit to shatter it."></div>
   <div class="paper-overlay" aria-hidden="true"></div>
-  <header class="topbar">
-    <a class="back-link" href="/dreams"><svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><use href="/icons/arrows.svg#left" /></svg> <span lang="hi">सपने</span> Dreams</a>
-    <span class="edition"><span class="brand-name">MESSTripping</span> <span>/</span> Dream no. 01</span>
+  <header class="site-header scroll-header">
+    <nav class="navigation" aria-label="Portfolio">
+      <ul role="list">
+        <li><a href="/#biography"><span lang="hi">मेरे बारे में</span><span class="navigation-english">About Me</span></a></li>
+        <li><a href="/#projects"><span lang="hi">प्रोजैक्ट</span><span class="navigation-english">Projects</span></a></li>
+        <li><a href="/#socials"><span lang="hi">सोशल</span><span class="navigation-english">Socials</span></a></li>
+        <li><a href="/dreams" aria-current="page"><span lang="hi">सपने</span><span class="navigation-english">Dreams</span></a></li>
+      </ul>
+    </nav>
   </header>
 
   <main id="start-screen" class="start-screen">

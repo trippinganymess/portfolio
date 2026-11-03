@@ -220,6 +220,29 @@ export function createSketchRobot() {
   plate(upperBodyGroup, 'M 119 390 L 207 426 L 200 444 L 109 409 Z', 28, 5, edgeMetal, 2);
   plate(upperBodyGroup, 'M 125 386 L 206 422 L 202 432 L 116 402 Z', 24, 13, armor, 1);
 
+  const rocketPackGroup = group(upperBodyGroup, [38, 560], -12);
+  rocketPackGroup.visible = false;
+  plate(rocketPackGroup, 'M 7 468 L 51 464 L 70 485 L 68 645 L 51 669 L 8 653 L -3 632 L -2 489 Z', 42, 18, edgeMetal, 3);
+  plate(rocketPackGroup, 'M 8 485 L 41 483 L 43 631 L 9 632 Z', 14, 24, armor, 2);
+  seam(rocketPackGroup, 'M 11 505 L 37 505 M 11 517 L 37 517 M 11 529 L 37 529 M 10 602 L 39 602', 28);
+  rod(rocketPackGroup, [57, 491, 16], [94, 505, 2], 5, steel);
+  rod(rocketPackGroup, [61, 630, 16], [97, 640, 2], 5, steel);
+  const rocketJets = [];
+  for (const x of [18, 54]) {
+    const nozzle = group(rocketPackGroup, [x, 654], 16);
+    place(nozzle, new THREE.Mesh(new THREE.CylinderGeometry(5.5, 7, 10, 16), steel), x, 659, 0);
+    const flame = group(nozzle, [x, 684]);
+    const plumeMaterial = new THREE.MeshBasicMaterial({ color: 0x65cfff, transparent: true, opacity: 0.65, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
+    const plume = new THREE.Mesh(new THREE.ConeGeometry(6.8, 48, 20, 1, true), plumeMaterial);
+    plume.rotation.z = Math.PI;
+    plume.position.y = -24;
+    const core = new THREE.Mesh(new THREE.ConeGeometry(3.2, 34, 16), glow);
+    core.rotation.z = Math.PI;
+    core.position.y = -17;
+    flame.add(plume, core);
+    rocketJets.push({ flame, plumeMaterial });
+  }
+
   const neckAndHeadGroup = group(upperBodyGroup, [169, 405]);
   piston(neckAndHeadGroup, [152, 394, -3], [202, 336, -3], 10, 9);
   piston(neckAndHeadGroup, [189, 413, 8], [224, 355, 8], 11, 7);
@@ -293,6 +316,30 @@ export function createSketchRobot() {
   const torchTip = group(weldTorchGroup, [526, 576], 1);
   torchTip.add(new THREE.Mesh(new THREE.SphereGeometry(1.2, 12, 8), glow));
 
+  // Open palms replace the player while falling or flying.
+  const gestureHandGroup = group(handGroup, [452, 626], 16);
+  gestureHandGroup.visible = false;
+  plate(gestureHandGroup, 'M 442 611 L 466 605 L 485 618 L 483 646 L 458 653 L 440 637 Z', 18, 8, armor, 2);
+  for (let i = 0; i < 4; i++) {
+    const x = 455 + i * 9;
+    rod(gestureHandGroup, [x, 615, 12], [x + 11, 596 - i % 2 * 5, 12], 4, armor);
+    rod(gestureHandGroup, [x + 11, 596 - i % 2 * 5, 12], [x + 17, 590 - i % 2 * 5, 8], 3.5, edgeMetal);
+  }
+  rod(gestureHandGroup, [446, 630, 12], [432, 613, 16], 5, armor);
+
+  elbowGroup.name = 'primary-elbow';
+  handGroup.name = 'primary-hand';
+  musicPlayerGroup.name = 'music-player';
+  gestureHandGroup.name = 'gesture-hand';
+  const secondArmGroup = shoulderArmGroup.clone(true);
+  secondArmGroup.position.x += 15;
+  secondArmGroup.position.z -= 24;
+  secondArmGroup.visible = false;
+  secondArmGroup.getObjectByName('music-player').visible = false;
+  secondArmGroup.getObjectByName('gesture-hand').visible = true;
+  const secondElbowGroup = secondArmGroup.getObjectByName('primary-elbow');
+  upperBodyGroup.add(secondArmGroup);
+
   // Reuse one tube buffer between the moving headphone and player anchors.
   const wirePoints = Array.from({ length: 5 }, (_, i) => new THREE.Vector3(i, i * 2, 0));
   const wireCurve = new THREE.CatmullRomCurve3(wirePoints);
@@ -350,6 +397,8 @@ export function createSketchRobot() {
   Object.assign(robotRoot.userData, {
     upperBodyGroup, neckAndHeadGroup, headGroup, shoulderArmGroup, elbowGroup,
     handGroup, musicPlayerGroup, weldTorchGroup, torchTip, headphoneWireMesh,
+    gestureHandGroup, secondArmGroup, secondElbowGroup,
+    rocketPackGroup, rocketJets,
     flameGroup, updateHeadphoneWire, textures: [metalGrain], isBobbing: true, isFlying: false,
   });
   updateHeadphoneWire();
