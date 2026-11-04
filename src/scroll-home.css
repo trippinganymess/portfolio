@@ -59,6 +59,8 @@
 .home-greeting-reveal { width: 100%; max-width: 1200px; }
 .home-greeting {
   font-size: calc(clamp(64px, 11vw, 176px) * var(--text-scale));
+  font-weight: 700;
+  -webkit-text-stroke: 0;
   line-height: 1.1;
   text-align: center;
 }

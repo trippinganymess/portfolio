@@ -4,6 +4,7 @@ import { createSketchRobot, ROBOT_HEIGHT } from './robot';
 import { createLandingStation } from './station';
 import { createEffects } from './effects';
 import { createRobotCrows } from './crows';
+import { createScrollMotion } from './scroll-motion';
 
 export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement, onUnavailable, scrollReactive = false }) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
@@ -50,6 +51,7 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
   const landingStation = createLandingStation();
   scene.add(landingStation);
   const effects = createEffects(scene);
+  const scrollMotion = createScrollMotion(window.scrollY, performance.now());
   const station = new THREE.Vector3();
   const keyLightOffset = new THREE.Vector3(-170, 280, 330);
   const rimLightOffset = new THREE.Vector3(180, 110, -160);
@@ -62,25 +64,24 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
   let elapsed = 0;
   let noteRemaining = 0.65;
   let shadowRemaining = 0;
-  let fall = scrollReactive ? 1 : 0;
+  let atStart = window.scrollY <= 2;
+  let hover = scrollReactive ? 1 : 0;
+  let fall = 0;
   let thrust = 0;
   let landing = 0;
   let pageProgress = 0;
   let remainingScroll = 0;
   let atEnd = false;
   let dockHeight = 0;
-  let scrollSpeed = 0;
-  let scrollDirection = 1;
-  let previousScroll = window.scrollY;
-  let scrollTime = performance.now();
   const upperBodyY = rig.upperBodyGroup.position.y;
 
   function readJourney() {
     const maxScroll = Math.max(0, document.documentElement.scrollHeight - bounds.height);
     const scroll = THREE.MathUtils.clamp(window.scrollY, 0, maxScroll);
-    pageProgress = maxScroll ? scroll / maxScroll : 1;
+    pageProgress = maxScroll ? scroll / maxScroll : 0;
     remainingScroll = maxScroll - scroll;
-    atEnd = remainingScroll <= 2;
+    atStart = scroll <= 2;
+    atEnd = maxScroll > 0 && remainingScroll <= 2;
     const dock = stationElement.getBoundingClientRect();
     landingStation.position.set(
       dock.left + dock.width / 2 - bounds.left - bounds.width / 2,
@@ -90,11 +91,7 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
   }
 
   function onScroll() {
-    const now = performance.now();
-    scrollSpeed = THREE.MathUtils.clamp((window.scrollY - previousScroll) / Math.max(now - scrollTime, 16), -3, 3);
-    if (Math.abs(window.scrollY - previousScroll) > 0.5) scrollDirection = Math.sign(window.scrollY - previousScroll);
-    previousScroll = window.scrollY;
-    scrollTime = now;
+    scrollMotion.record(window.scrollY, performance.now());
     readJourney();
   }
 
@@ -138,13 +135,19 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     lastFrame = now;
     elapsed += delta;
     const headMotion = crows.advance(delta);
-    const moving = scrollReactive && !atEnd;
-    const targetFall = moving && scrollDirection > 0 ? 1 : 0;
-    const targetThrust = moving && scrollDirection < 0 ? 1 : 0;
+    const scrollState = scrollMotion.read(now);
+    const scrolling = scrollReactive && scrollState.scrolling;
+    const hovering = scrollReactive && !atEnd && (!scrolling || atStart);
+    const moving = scrolling && !atStart && !atEnd;
+    const targetFall = moving && scrollState.direction > 0 ? 1 : 0;
+    const targetThrust = moving && scrollState.direction < 0 ? 1 : 0;
     const blend = 1 - Math.exp(-delta * 12);
+    const landingBlend = atEnd ? 1 - Math.exp(-delta * 3.2) : blend;
+    hover = THREE.MathUtils.lerp(hover, hovering ? 1 : 0, landingBlend);
     fall = THREE.MathUtils.lerp(fall, targetFall, blend);
     thrust = THREE.MathUtils.lerp(thrust, targetThrust, blend);
-    landing = THREE.MathUtils.lerp(landing, scrollReactive && atEnd ? 1 : 0, blend);
+    landing = THREE.MathUtils.lerp(landing, scrollReactive && atEnd ? 1 : 0, landingBlend);
+    if (atEnd && landing > 0.985) { landing = 1; hover = 0; }
     const action = Math.max(fall, thrust);
     rig.headGroup.rotation.z = -0.12 + (Math.sin(elapsed * 3.8) * 0.035 + headMotion.roll) * (1 - action) + fall * Math.sin(elapsed * 12) * 0.08 - thrust * 0.16;
     rig.headGroup.rotation.y = headMotion.yaw * (1 - action);
@@ -156,27 +159,40 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     rig.gestureHandGroup.visible = action > 0.03;
     rig.musicPlayerGroup.visible = action < 0.15;
     rig.headphoneWireMesh.visible = action < 0.15;
-    rig.upperBodyGroup.rotation.z = Math.sin(elapsed * 1.9) * 0.006 * (1 - action) + fall * 0.07 - thrust * 0.08 - landing * 0.12;
-    rig.upperBodyGroup.position.y = upperBodyY - landing * 12;
-    rig.rocketPackGroup.visible = thrust > 0.03;
+    rig.upperBodyGroup.rotation.z = Math.sin(elapsed * 1.9) * 0.006 * (1 - action) + fall * 0.07 - thrust * 0.08 - landing * 0.12 * (1 - hover);
+    rig.upperBodyGroup.position.y = upperBodyY - landing * 12 * (1 - hover);
+    const landingPower = scrollReactive && atEnd ? 0.5 * (1 - landing) : 0;
+    const enginePower = Math.max(thrust, hover * 0.5, landingPower);
+    rig.rocketPackGroup.visible = enginePower > 0.03;
     for (const [index, jet] of rig.rocketJets.entries()) {
       const flicker = 0.85 + Math.sin(elapsed * 55 + index * 2) * 0.15;
-      jet.flame.scale.set(0.85 + thrust * 0.2, thrust * flicker, 1);
-      jet.plumeMaterial.opacity = thrust * 0.65;
+      jet.flame.scale.set(0.85 + enginePower * 0.2, enginePower * flicker, 1);
+      jet.plumeMaterial.opacity = enginePower * 0.65;
     }
     updateRobotPosition();
-    robot.rotation.z = fall * (Math.sin(elapsed * 8) * 0.06 + scrollSpeed * 0.05) - thrust * 0.09;
+    robot.rotation.z = (fall * (Math.sin(elapsed * 8) * 0.06 + scrollState.speed * 0.05) - thrust * 0.09) * (1 - hover) + Math.sin(elapsed * 1.9) * 0.016 * hover;
     if (scrollReactive) {
       const flightStart = station.y + Math.min(48, bounds.height * 0.06);
       const flightEnd = station.y + Math.min(12, bounds.height * 0.02);
       const progress = THREE.MathUtils.smoothstep(pageProgress, 0, 1);
       const airborneY = THREE.MathUtils.lerp(flightStart, flightEnd, progress) + Math.sin(elapsed * 2.2) * 5;
-      robot.position.y = THREE.MathUtils.lerp(airborneY, station.y, landing);
+      const hoveringY = station.y + Math.min(56, bounds.height * 0.07) + Math.sin(elapsed * 2.2) * 3.2;
+      robot.position.y = THREE.MathUtils.lerp(THREE.MathUtils.lerp(airborneY, station.y, landing), hoveringY, hover);
     }
     landingStation.visible = !scrollReactive || remainingScroll < dockHeight + 40;
     mainLight.position.copy(robot.position).add(keyLightOffset);
     rimLight.position.copy(robot.position).add(rimLightOffset);
-    stage.dataset.motion = scrollReactive && atEnd ? (landing > 0.96 ? 'landed' : 'landing') : targetThrust || thrust > 0.08 ? 'ascending' : targetFall || fall > 0.08 ? 'falling' : 'idle';
+    let motion = 'idle';
+    if (hovering) motion = hover > 0.96 && action < 0.04 ? 'hovering' : 'lifting';
+    else if (scrollReactive && atEnd) motion = landing === 1 ? 'landed' : 'landing';
+    else if (targetThrust || thrust > 0.08) motion = 'ascending';
+    else if (targetFall || fall > 0.08) motion = 'falling';
+    stage.dataset.motion = motion;
+    stage.dataset.atStart = String(atStart);
+    stage.dataset.scrolling = String(scrolling);
+    stage.dataset.hover = hover.toFixed(3);
+    stage.dataset.enginePower = enginePower.toFixed(3);
+    stage.dataset.rocketActive = String(rig.rocketPackGroup.visible);
     stage.dataset.atEnd = String(atEnd);
     stage.dataset.pageProgress = pageProgress.toFixed(4);
     stage.dataset.padVisible = String(landingStation.visible);
@@ -238,6 +254,11 @@ export function createHomeAnimation({ stage, canvas, robotAnchor, stationElement
     crows.dispose();
     delete stage.dataset.crowState;
     delete stage.dataset.motion;
+    delete stage.dataset.atStart;
+    delete stage.dataset.scrolling;
+    delete stage.dataset.hover;
+    delete stage.dataset.enginePower;
+    delete stage.dataset.rocketActive;
     delete stage.dataset.atEnd;
     delete stage.dataset.pageProgress;
     delete stage.dataset.padVisible;

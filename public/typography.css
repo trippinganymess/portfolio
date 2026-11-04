@@ -1,23 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Honk&family=Noto+Sans:wght@400&family=Noto+Sans+Devanagari:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400&display=swap');
+
+@font-face {
+  font-family: 'D-DIN';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/d-din/D-DIN.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'D-DIN';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/d-din/D-DIN-Bold.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'D-DIN';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/d-din/D-DIN-Italic.otf') format('opentype');
+}
 
 :root {
   --text-scale: 1.1;
   font-size: calc(16px * var(--text-scale));
-  --font-body: 'Noto Sans', sans-serif;
-  --font-display: 'Honk', sans-serif;
+  --font-body: 'D-DIN', 'Noto Sans Devanagari', sans-serif;
+  --font-display: var(--font-body);
   --page-background-olive: #262d17;
   --page-background: #000000;
   --page-foreground: #dcc2b6;
   --page-secondary: #c9b1a5;
   --title-foreground: #b8a197;
-  font-palette: --site-honk;
 }
 
-[lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
+[lang="hi"], button, input, select, textarea { font-family: var(--font-body); }
 h1, h2, h3, h4, h5, h6 { color: var(--title-foreground); }
-
-@font-palette-values --site-honk {
-  font-family: 'Honk';
-  override-colors: 0 #1e2412, 1 #202613, 2 #f7b0ae, 3 #f7b0ae,
-    4 #f1a48e, 5 #ea9772, 6 #e5915b, 7 #e5915b;
-}
+/* A light stroke adds a small emphasis between D-DIN's regular and bold faces. */
+h1, h2, h3, h4, h5, h6, .mess, .tripping { -webkit-text-stroke: 0.008em currentColor; }
+.games-count { -webkit-text-stroke: 0; }

@@ -81,7 +81,7 @@ function Biography({ embedded = false }) {
         </header>
         <div className="biography-copy" data-node-id="12:34">
           <figure className="biography-portrait">
-            <img src="/about/animesh-tripathi.png" alt="Portrait of Animesh Tripathi" width="500" height="500" />
+            <img src="/about/animesh-tripathi.png" alt="Portrait of Animesh Tripathi" width="433" height="577" />
           </figure>
           <div className="personal-introduction" data-node-id="12:38">
             <p data-node-id="12:39">I’m Animesh Tripathi. My practice brings together Machine learning, API development, and Design,  with a focus on Reliability and user experience.</p>

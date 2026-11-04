@@ -9,7 +9,7 @@
 }
 
 .blog-page a { color: inherit; }
-.blog-page [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
+.blog-page [lang="hi"] { font-family: var(--font-body); }
 .blog-heading { width: 100%; padding-top: 92px; }
 .blog-heading > p { font-size: calc(25px * var(--text-scale)); line-height: calc(33px * var(--text-scale)); }
 .blog-heading h1 { margin-top: 10px; font-size: calc(104px * var(--text-scale)); line-height: 1.1; font-weight: 300; letter-spacing: -5px; }

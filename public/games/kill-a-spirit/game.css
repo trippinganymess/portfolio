@@ -1,4 +1,11 @@
 @import url('/typography.css');
+@import url('https://fonts.googleapis.com/css2?family=Honk&display=swap');
+
+@font-palette-values --site-honk {
+  font-family: 'Honk';
+  override-colors: 0 #1e2412, 1 #202613, 2 #f7b0ae, 3 #f7b0ae,
+    4 #f1a48e, 5 #ea9772, 6 #e5915b, 7 #e5915b;
+}
 
 :root { color-scheme: dark; font-family: var(--font-body); color: var(--page-foreground); background: var(--page-background); font-synthesis: none; }
 * { box-sizing: border-box; }
@@ -22,7 +29,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .start-screen { position: fixed; inset: 0; z-index: 3; display: flex; align-items: center; padding: 100px 8vw; background: linear-gradient(90deg, #282138b8 0%, #35274248 40%, transparent 67%); }
 .invitation { margin-top: -15px; max-width: 500px; }
 .eyebrow { font-size: calc(9px * var(--text-scale)); text-transform: uppercase; letter-spacing: .22em; line-height: 1.7; margin: 0 0 22px; }
-.invitation h1 { font-family: var(--font-display); font-size: calc(clamp(76px, 8.3vw, 130px) * var(--text-scale)); font-weight: 400; line-height: .88; letter-spacing: -.055em; margin: 0 0 28px; text-shadow: 0 4px 30px #3c294c33; }
+.invitation h1 { font-family: 'Honk', sans-serif; font-palette: --site-honk; font-size: calc(clamp(76px, 8.3vw, 130px) * var(--text-scale)); font-weight: 400; line-height: .88; letter-spacing: -.055em; margin: 0 0 28px; text-shadow: 0 4px 30px #3c294c33; }
 .invitation h1 em { color: #f7c6b7; font-weight: 400; }
 .intro { font-size: calc(13px * var(--text-scale)); font-weight: 300; line-height: 1.9; color: var(--page-foreground); margin: 0 0 27px; }
 .enter-button { display: inline-flex; align-items: center; justify-content: space-between; gap: 48px; min-width: 217px; padding: 17px 23px; border: 1px solid #f6d9c982; color: var(--page-background); background: var(--page-foreground); font-size: calc(12px * var(--text-scale)); border-radius: 2px; transition: background .2s, transform .2s; }

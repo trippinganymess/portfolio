@@ -52,7 +52,7 @@
   transition: color 180ms ease;
 }
 .scroll-header .navigation span { display: block; white-space: nowrap; }
-.scroll-header .navigation [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; font-weight: 300; line-height: 1.4; }
+.scroll-header .navigation [lang="hi"] { font-family: var(--font-body); font-weight: 300; line-height: 1.4; }
 .scroll-header .navigation-english { opacity: 0.9; }
 .scroll-header .navigation a[aria-current] .navigation-english { opacity: 1; }
 .scroll-header .navigation a[aria-current] { color: #f7b0ae; }

@@ -138,7 +138,7 @@ main[tabindex="-1"]:focus { outline: none; }
 .dreams-spark { position: fixed; z-index: 4; display: block; width: 0; height: 0; pointer-events: none; }
 
 .navigation [lang="hi"] {
-  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-family: var(--font-body);
   font-weight: 300;
   line-height: calc(22px * var(--text-scale));
 }
@@ -188,7 +188,7 @@ main[tabindex="-1"]:focus { outline: none; }
 .biography a { color: inherit; }
 
 .biography [lang="hi"] {
-  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-family: var(--font-body);
   font-weight: 300;
 }
 
@@ -268,7 +268,7 @@ main[tabindex="-1"]:focus { outline: none; }
 }
 
 .games-page a { color: inherit; }
-.games-page [lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
+.games-page [lang="hi"] { font-family: var(--font-body); }
 .games-introduction { width: 100%; padding-top: 92px; }
 .games-heading > p { font-size: calc(25px * var(--text-scale)); line-height: calc(33px * var(--text-scale)); }
 .games-heading h1 { margin-top: 10px; font-size: calc(104px * var(--text-scale)); line-height: 1.1; font-weight: 400; letter-spacing: -5px; }
